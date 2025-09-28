@@ -1,0 +1,108 @@
+﻿<Window x:Class="ChessGame.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ChessGame"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="940" Width="900">
+    <Grid Background="#3b2716">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="900*"/>
+            <RowDefinition Height="0*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="0,50,0,19" Width="800">
+
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0">
+                <TextBlock Width="100" Height="100" Background="#cfc2b8"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#cfc2b8"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#cfc2b8"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#cfc2b8"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0">
+                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#cfc2b8"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#cfc2b8"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#cfc2b8"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#cfc2b8"></TextBlock>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0">
+                <TextBlock Width="100" Height="100" Background="#cfc2b8"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#cfc2b8"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#cfc2b8"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#cfc2b8"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0">
+                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#cfc2b8"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#cfc2b8"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#cfc2b8"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#cfc2b8"></TextBlock>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0">
+                <TextBlock Width="100" Height="100" Background="#cfc2b8"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#cfc2b8"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#cfc2b8"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#cfc2b8"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0">
+                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5"></TextBlock>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0">
+                <TextBlock Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5">♟️</TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5">♟️</TextBlock>
+                <TextBlock Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5">♟️</TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5">♟️</TextBlock>
+                <TextBlock Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5">♟️</TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5">♟️</TextBlock>
+                <TextBlock Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5">♟️</TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5">♟️</TextBlock>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0">
+                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#b09278"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#b09278"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#b09278"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#b09278"></TextBlock>
+            </StackPanel>
+        </StackPanel>
+
+
+    </Grid>
+</Window>
