@@ -81,25 +81,25 @@
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0">
-                <TextBlock Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5">♟️</TextBlock>
-                <TextBlock Width="100" Height="100" Background="#57391f" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5">♟️</TextBlock>
-                <TextBlock Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5">♟️</TextBlock>
-                <TextBlock Width="100" Height="100" Background="#57391f" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5">♟️</TextBlock>
-                <TextBlock Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5">♟️</TextBlock>
-                <TextBlock Width="100" Height="100" Background="#57391f" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5">♟️</TextBlock>
-                <TextBlock Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5">♟️</TextBlock>
-                <TextBlock Width="100" Height="100" Background="#57391f" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5">♟️</TextBlock>
+                <TextBlock Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♟️</TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♟️</TextBlock>
+                <TextBlock Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♟️</TextBlock>
+                <TextBlock MouseDown="selectTile" Name="b4" Width="100" Height="100" Background="#57391f" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♟️</TextBlock>
+                <TextBlock MouseDown="selectTile" Name="b5" Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♟️</TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♟️</TextBlock>
+                <TextBlock Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♟️</TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♟️</TextBlock>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0">
-                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
-                <TextBlock Width="100" Height="100" Background="#b09278"></TextBlock>
-                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
-                <TextBlock Width="100" Height="100" Background="#b09278"></TextBlock>
-                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
-                <TextBlock Width="100" Height="100" Background="#b09278"></TextBlock>
-                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
-                <TextBlock Width="100" Height="100" Background="#b09278"></TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♖</TextBlock>
+                <TextBlock Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♘</TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♗</TextBlock>
+                <TextBlock Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♕</TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♔</TextBlock>
+                <TextBlock Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♗</TextBlock>
+                <TextBlock Width="100" Height="100" Background="#57391f" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♘</TextBlock>
+                <TextBlock Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♖</TextBlock>
             </StackPanel>
         </StackPanel>
 
