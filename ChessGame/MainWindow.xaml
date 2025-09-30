@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ChessGame"
         mc:Ignorable="d"
         Title="MainWindow" Height="940" Width="900">
-    <Grid Background="#3b2716">
+    <Grid Name="chessboard" Background="#3b2716">
         <Grid.RowDefinitions>
             <RowDefinition Height="900*"/>
             <RowDefinition Height="0*"/>
@@ -59,36 +59,36 @@
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0">
-                <TextBlock Width="100" Height="100" Background="#cfc2b8"></TextBlock>
-                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
-                <TextBlock Width="100" Height="100" Background="#cfc2b8"></TextBlock>
-                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
-                <TextBlock Width="100" Height="100" Background="#cfc2b8"></TextBlock>
-                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
-                <TextBlock Width="100" Height="100" Background="#cfc2b8"></TextBlock>
-                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
+                <TextBlock Name="a4" Width="100" Height="100" Background="#cfc2b8"></TextBlock>
+                <TextBlock Name="b4" Width="100" Height="100" Background="#57391f"></TextBlock>
+                <TextBlock Name="c4" Width="100" Height="100" Background="#cfc2b8"></TextBlock>
+                <TextBlock Name="d4" Width="100" Height="100" Background="#57391f"></TextBlock>
+                <TextBlock Name="e4" Width="100" Height="100" Background="#cfc2b8"></TextBlock>
+                <TextBlock Name="f4" Width="100" Height="100" Background="#57391f"></TextBlock>
+                <TextBlock Name="g4" Width="100" Height="100" Background="#cfc2b8"></TextBlock>
+                <TextBlock Name="h4" Width="100" Height="100" Background="#57391f"></TextBlock>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0">
-                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
-                <TextBlock Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5"></TextBlock>
-                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
-                <TextBlock Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5"></TextBlock>
-                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
-                <TextBlock Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5"></TextBlock>
-                <TextBlock Width="100" Height="100" Background="#57391f"></TextBlock>
-                <TextBlock Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5"></TextBlock>
+                <TextBlock Width="100" Height="100" Name="a3" Background="#57391f"></TextBlock>
+                <TextBlock Width="100" Height="100" Name="b3" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5"></TextBlock>
+                <TextBlock Width="100" Height="100" Name="c3" Background="#57391f"></TextBlock>
+                <TextBlock Width="100" Height="100" Name="d3" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5"></TextBlock>
+                <TextBlock Width="100" Height="100" Name="e3" Background="#57391f"></TextBlock>
+                <TextBlock Width="100" Height="100" Name="f3" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5"></TextBlock>
+                <TextBlock Width="100" Height="100" Name="g3" Background="#57391f"></TextBlock>
+                <TextBlock Width="100" Height="100" Name="h3" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5"></TextBlock>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0">
-                <TextBlock Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♟️</TextBlock>
-                <TextBlock Width="100" Height="100" Background="#57391f" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♟️</TextBlock>
-                <TextBlock Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♟️</TextBlock>
-                <TextBlock MouseDown="selectTile" Name="b4" Width="100" Height="100" Background="#57391f" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♟️</TextBlock>
-                <TextBlock MouseDown="selectTile" Name="b5" Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♟️</TextBlock>
-                <TextBlock Width="100" Height="100" Background="#57391f" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♟️</TextBlock>
-                <TextBlock Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♟️</TextBlock>
-                <TextBlock Width="100" Height="100" Background="#57391f" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♟️</TextBlock>
+                <TextBlock MouseDown="selectTile" Name="a2" Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♟️</TextBlock>
+                <TextBlock MouseDown="selectTile" Name="b2" Width="100" Height="100" Background="#57391f" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♟️</TextBlock>
+                <TextBlock MouseDown="selectTile" Name="c2" Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♟️</TextBlock>
+                <TextBlock MouseDown="selectTile" Name="d2" Width="100" Height="100" Background="#57391f" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♟️</TextBlock>
+                <TextBlock MouseDown="selectTile" Name="e2" Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♟️</TextBlock>
+                <TextBlock MouseDown="selectTile" Name="f2" Width="100" Height="100" Background="#57391f" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♟️</TextBlock>
+                <TextBlock MouseDown="selectTile" Name="g2" Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♟️</TextBlock>
+                <TextBlock MouseDown="selectTile" Name="h2" Width="100" Height="100" Background="#57391f" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♟️</TextBlock>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0">

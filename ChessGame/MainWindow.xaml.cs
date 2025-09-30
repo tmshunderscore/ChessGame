@@ -17,8 +17,9 @@ namespace ChessGame
     public partial class MainWindow : Window
     {
         Tile[,] board = new Tile[8, 8];
+        List<(int,int)> listOfPlayableMoves = new List<(int,int)>();
         String boardRow;
-        class Tile
+        public class Tile
         {
             public string Name { get; set; }
         }
@@ -33,23 +34,31 @@ namespace ChessGame
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             AssignNamesToBoardTiles();
-
+            
         }
 
         private void selectTile(object sender, MouseButtonEventArgs e)
         {
-            //placeholder(this, sender);
-            System.Diagnostics.Debug.WriteLine(((TextBlock)sender).Name);
+            //System.Diagnostics.Debug.WriteLine(((TextBlock)sender).Name);
             ((TextBlock)sender).Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#00000000");
-            ruleset(sender);
-            //(TextBlock)sender).Name
+
+
+            ColorTileByPosition(ruleset(sender, FindPosition(sender, board).Item2, FindPosition(sender, board).Item1));
+
+            foreach (var moves in listOfPlayableMoves) {
+                System.Diagnostics.Debug.WriteLine(moves);
+            }
         }
 
-        private string ruleset(object sender)
+        private List<(int,int)> ruleset(object sender, int ycords, int xcords)
         {
+            listOfPlayableMoves.Clear();
+
             switch (((TextBlock)sender).Text){
                 case "♟️":
-
+                    listOfPlayableMoves.Add((xcords,ycords + 1));
+                    listOfPlayableMoves.Add((xcords, ycords + 2));
+                    return listOfPlayableMoves;
                 break;
 
 
@@ -72,7 +81,17 @@ namespace ChessGame
 
                 break;
             }
-            return "zero";
+            return null;
+        }
+
+        public void ColorTileByPosition( List<(int, int)> position)
+        {
+
+            for (int j = 0; j < listOfPlayableMoves.Count; j++)
+            {
+                object item = chessboard.FindName(board[listOfPlayableMoves[j].Item1, listOfPlayableMoves[j].Item2].Name);
+                ((TextBlock)item).Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#2f7341");
+            }
         }
 
         public void AssignNamesToBoardTiles()
@@ -125,44 +144,33 @@ namespace ChessGame
             }
         }
 
-        public Tile FindPosition()
+         public (int, int) FindPosition(object sender, Tile[,] board)
         {
             for (int i = 0; i <= 7; i++)
             {
                 for (int j = 0; j <= 7; j++)
                 {
-
+                    if(((TextBlock)sender).Name == board[i,j].Name)
+                    {
+                        return (i,j);
+                    }
+                        
                 }
             }
+            return (-1,-1);
+
         }
 
 
-        public static void placeholder(Visual myvisual, object sender)
+        public void placeholder(object sender, RoutedEventArgs e)
         {
-            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(myvisual); i++)
+            object item = chessboard.FindName("b10");
+            if (item is TextBlock)
             {
-                // Retrieve child visual at specified index value.
-                Visual childVisual = (Visual)VisualTreeHelper.GetChild(myvisual, i);
-
-
-
-                
-                    System.Diagnostics.Debug.WriteLine((String)childVisual.GetValue(NameProperty));
-                
-
-
-                //(String)childVisual.GetValue(NameProperty)
-
-
-
-
-
-
-
-
-                //placeholder(childVisual);
+                System.Diagnostics.Debug.WriteLine("I guess it works?");
             }
         }
+
     }
 }
 
