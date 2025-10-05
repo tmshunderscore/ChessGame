@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Reflection;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -22,6 +23,7 @@ namespace ChessGame
         List<(int,int)> listOfPlayableMoves = new List<(int,int)>();
         String boardRow;
         selectTileState phase = selectTileState.select;
+        turn playerTurn = turn.whitesTurn;
         object currentSender;
         enum selectTileState
         {
@@ -29,6 +31,11 @@ namespace ChessGame
             move
         }
 
+        enum turn
+        {
+            whitesTurn,
+            blacksTurn
+        }
 
 
         public class Tile
@@ -64,20 +71,25 @@ namespace ChessGame
             {
                 
                 case selectTileState.select:
-                    currentSender = sender;
-
-                    ((TextBlock)sender).Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#00000000");
-
-
-                    ColorTileByPosition(ruleset(sender, FindPosition(sender, board).Item2, FindPosition(sender, board).Item1));
-
-                    foreach (var moves in listOfPlayableMoves)
+                    if (((TextBlock)sender).Foreground == Brushes.White && playerTurn == turn.whitesTurn || ((TextBlock)sender).Foreground == Brushes.Black && playerTurn == turn.blacksTurn)
                     {
-                        System.Diagnostics.Debug.WriteLine(moves);
-                    }
 
-                    phase = selectTileState.move;
-                    break;
+
+                        currentSender = sender;
+
+                        ((TextBlock)sender).Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#00000000");
+
+
+                        ColorTileByPosition(ruleset(sender, FindPosition(sender, board).Item2, FindPosition(sender, board).Item1));
+
+                        foreach (var moves in listOfPlayableMoves)
+                        {
+                            System.Diagnostics.Debug.WriteLine(moves);
+                        }
+
+                        phase = selectTileState.move;
+                    }
+                        break;
 
                 case selectTileState.move:
                     ClearTileColorByPosition(listOfPlayableMoves, currentSender);
@@ -86,8 +98,22 @@ namespace ChessGame
 
 
                     phase = selectTileState.select;
+
+                    if (playerTurn == turn.whitesTurn)
+                    {
+                        playerTurn = turn.blacksTurn;
+                    }
+                    else if (playerTurn == turn.blacksTurn)
+                    {
+                        playerTurn = turn.whitesTurn;
+                    }
+                    System.Diagnostics.Debug.WriteLine(playerTurn);
+
                     break;
+
             }
+
+           
 
             
         }
@@ -116,8 +142,14 @@ namespace ChessGame
 
         private bool isInBoundsX(int xcords)
         {
-            if (xcords < 8 && xcords > 0) { return true; }  
+            if (xcords < 8 && xcords >= 0) { return true; }  
                     return false;
+        }
+
+        private bool isInBoundsY(int ycords)
+        {
+            if (ycords < 8 && ycords >= 0) { return true; }
+            return false;
         }
 
         private bool doesTileHaveAChessPiece(int xcords, int ycords)
@@ -139,6 +171,276 @@ namespace ChessGame
 
         }
 
+        private void whDiagonalTopLeftMoves(int xcords, int ycords) {
+            for (int i = 1; i < 8; i++)
+            {
+                if (isInBoundsX(xcords - i) && isInBoundsY(ycords + i) && !doesTileHaveAChessPiece(xcords - i, ycords + i)) { listOfPlayableMoves.Add((xcords - i, ycords + i)); }
+                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords - i, ycords + i) && isAChessPieceBlackOrWhite(xcords - i, ycords + i) == "black") { listOfPlayableMoves.Add((xcords - i, ycords + i)); break; }
+                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords - i, ycords + i) && isAChessPieceBlackOrWhite(xcords - i, ycords + i) == "white") { break; }
+                else {  break; }
+            }
+        }
+        private void whDiagonalTopRightMoves(int xcords, int ycords)
+        {
+            for (int i = 1; i < 8; i++)
+            {
+                if (isInBoundsX(xcords + i) && isInBoundsY(ycords + i) && !doesTileHaveAChessPiece(xcords + i, ycords + i)) { listOfPlayableMoves.Add((xcords + i, ycords + i)); }
+                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords + i, ycords + i) && isAChessPieceBlackOrWhite(xcords + i, ycords + i) == "black") { listOfPlayableMoves.Add((xcords + i, ycords + i)); break; }
+                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords + i, ycords + i) && isAChessPieceBlackOrWhite(xcords + i, ycords + i) == "white") { break; }
+                else { break; }
+            }
+        }
+
+        private void whDiagonalBottomLeftMoves(int xcords, int ycords)
+        {
+            for (int i = 1; i < 8; i++)
+            {
+                if (isInBoundsX(xcords - i) && isInBoundsY(ycords - i) && !doesTileHaveAChessPiece(xcords - i, ycords - i)) { listOfPlayableMoves.Add((xcords - i, ycords - i)); }
+                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords - i, ycords - i) && isAChessPieceBlackOrWhite(xcords - i, ycords - i) == "black") { listOfPlayableMoves.Add((xcords - i, ycords - i)); break; }
+                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords - i, ycords - i) && isAChessPieceBlackOrWhite(xcords - i, ycords - i) == "white") { break; }
+                else { break; }
+            }
+        }
+        private void whDiagonalBottomRightMoves(int xcords, int ycords)
+        {
+            for (int i = 1; i < 8; i++)
+            {
+                if (isInBoundsX(xcords + i) && isInBoundsY(ycords - i) && !doesTileHaveAChessPiece(xcords + i, ycords - i)) { listOfPlayableMoves.Add((xcords + i, ycords - i)); }
+                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords + i, ycords - i) && isAChessPieceBlackOrWhite(xcords + i, ycords - i) == "black") { listOfPlayableMoves.Add((xcords + i, ycords - i)); break; }
+                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords + i, ycords - i) && isAChessPieceBlackOrWhite(xcords + i, ycords - i) == "white") { break; }
+                else { break; }
+            }
+        }
+
+        private void whHorizontalRightMoves(int xcords, int ycords)
+        {
+            for (int i = 1; i < 8; i++)
+            {
+                if (isInBoundsX(xcords + i) && !doesTileHaveAChessPiece(xcords + i, ycords)) { listOfPlayableMoves.Add((xcords + i, ycords)); }
+                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords) && doesTileHaveAChessPiece(xcords + i, ycords) && isAChessPieceBlackOrWhite(xcords + i, ycords) == "black") { listOfPlayableMoves.Add((xcords + i, ycords)); break; }
+                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords) && doesTileHaveAChessPiece(xcords + i, ycords) && isAChessPieceBlackOrWhite(xcords + i, ycords) == "white") { break; }
+                else { break; }
+            }
+        }
+
+        private void whHorizontalLeftMoves(int xcords, int ycords)
+        {
+            for (int i = 1; i < 8; i++)
+            {
+                if (isInBoundsX(xcords - i) && !doesTileHaveAChessPiece(xcords - i, ycords)) { listOfPlayableMoves.Add((xcords - i, ycords)); }
+                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords) && doesTileHaveAChessPiece(xcords - i, ycords) && isAChessPieceBlackOrWhite(xcords - i, ycords) == "black") { listOfPlayableMoves.Add((xcords - i, ycords)); break; }
+                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords) && doesTileHaveAChessPiece(xcords - i, ycords) && isAChessPieceBlackOrWhite(xcords - i, ycords) == "white") { break; }
+                else { break; }
+            }
+        }
+
+        private void whVerticalTopMoves(int xcords, int ycords)
+        {
+            for (int i = 1; i < 8; i++)
+            {
+                if (isInBoundsY(ycords + i) && !doesTileHaveAChessPiece(xcords, ycords + i)) { listOfPlayableMoves.Add((xcords, ycords + i)); }
+                else if (isInBoundsX(xcords) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords, ycords + i) && isAChessPieceBlackOrWhite(xcords, ycords + i) == "black") { listOfPlayableMoves.Add((xcords, ycords + i)); break; }
+                else if (isInBoundsX(xcords) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords, ycords + i) && isAChessPieceBlackOrWhite(xcords, ycords + i) == "white") { break; }
+                else { break; }
+            }
+        }
+
+        private void whVerticalBottomMoves(int xcords, int ycords)
+        {
+            for (int i = 1; i < 8; i++)
+            {
+                if (isInBoundsY(ycords - i) && !doesTileHaveAChessPiece(xcords, ycords - i)) { listOfPlayableMoves.Add((xcords, ycords - i)); }
+                else if (isInBoundsX(xcords) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords, ycords - i) && isAChessPieceBlackOrWhite(xcords, ycords - i) == "black") { listOfPlayableMoves.Add((xcords, ycords - i)); break; }
+                else if (isInBoundsX(xcords) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords, ycords - i) && isAChessPieceBlackOrWhite(xcords, ycords - i) == "white") { break; }
+                else { break; }
+            }
+        }
+
+        private void whKnightMoves(int xcords, int ycords)
+        {
+                if (isInBoundsX(xcords + 1) && isInBoundsY(ycords + 2) && !doesTileHaveAChessPiece(xcords + 1, ycords + 2)) { listOfPlayableMoves.Add((xcords + 1, ycords + 2)); }
+                if (isInBoundsX(xcords + 1) && isInBoundsY(ycords + 2) && doesTileHaveAChessPiece(xcords + 1, ycords + 2) && isAChessPieceBlackOrWhite(xcords + 1, ycords + 2) == "black") { listOfPlayableMoves.Add((xcords + 1, ycords + 2)); }
+
+                if (isInBoundsX(xcords + 2) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords + 2, ycords + 1)) { listOfPlayableMoves.Add((xcords + 2, ycords + 1)); }
+                if (isInBoundsX(xcords + 2) && isInBoundsY(ycords + 1) && doesTileHaveAChessPiece(xcords + 2, ycords + 1) && isAChessPieceBlackOrWhite(xcords + 2, ycords + 1) == "black") { listOfPlayableMoves.Add((xcords + 2, ycords + 1)); }
+
+                if (isInBoundsX(xcords + 2) && isInBoundsY(ycords - 1) && !doesTileHaveAChessPiece(xcords + 2, ycords - 1)) { listOfPlayableMoves.Add((xcords + 2, ycords - 1)); }
+                if (isInBoundsX(xcords + 2) && isInBoundsY(ycords - 1) && doesTileHaveAChessPiece(xcords + 2, ycords - 1) && isAChessPieceBlackOrWhite(xcords + 2, ycords - 1) == "black") { listOfPlayableMoves.Add((xcords + 2, ycords - 1)); }
+
+                if (isInBoundsX(xcords + 1) && isInBoundsY(ycords -2) && !doesTileHaveAChessPiece(xcords + 1, ycords -2)) { listOfPlayableMoves.Add((xcords + 1, ycords -2)); }
+                if (isInBoundsX(xcords + 1) && isInBoundsY(ycords -2) && doesTileHaveAChessPiece(xcords + 1, ycords -2) && isAChessPieceBlackOrWhite(xcords + 1, ycords -2) == "black") { listOfPlayableMoves.Add((xcords + 1, ycords - 2)); }
+
+
+            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords + 2) && !doesTileHaveAChessPiece(xcords - 1, ycords + 2)) { listOfPlayableMoves.Add((xcords - 1, ycords + 2)); }
+            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords + 2) && doesTileHaveAChessPiece(xcords - 1, ycords + 2) && isAChessPieceBlackOrWhite(xcords - 1, ycords + 2) == "black") { listOfPlayableMoves.Add((xcords - 1, ycords + 2)); }
+
+            if (isInBoundsX(xcords - 2) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords - 2, ycords + 1)) { listOfPlayableMoves.Add((xcords - 2, ycords + 1)); }
+            if (isInBoundsX(xcords - 2) && isInBoundsY(ycords + 1) && doesTileHaveAChessPiece(xcords - 2, ycords + 1) && isAChessPieceBlackOrWhite(xcords - 2, ycords + 1) == "black") { listOfPlayableMoves.Add((xcords - 2, ycords + 1)); }
+
+            if (isInBoundsX(xcords - 2) && isInBoundsY(ycords - 1) && !doesTileHaveAChessPiece(xcords - 2, ycords - 1)) { listOfPlayableMoves.Add((xcords - 2, ycords - 1)); }
+            if (isInBoundsX(xcords - 2) && isInBoundsY(ycords - 1) && doesTileHaveAChessPiece(xcords - 2, ycords - 1) && isAChessPieceBlackOrWhite(xcords - 2, ycords - 1) == "black") { listOfPlayableMoves.Add((xcords - 2, ycords - 1)); }
+
+            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords - 2) && !doesTileHaveAChessPiece(xcords - 1, ycords - 2)) { listOfPlayableMoves.Add((xcords - 1, ycords - 2)); }
+            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords - 2) && doesTileHaveAChessPiece(xcords - 1, ycords - 2) && isAChessPieceBlackOrWhite(xcords - 1, ycords - 2) == "black") { listOfPlayableMoves.Add((xcords - 1, ycords - 2)); }
+
+        }
+
+        private List<(int,int)> whPawnMoves(object sender,int xcords, int ycords)
+
+        {
+            // diagonal right chess piece take 
+            if (isInBoundsX(xcords + 1) && doesTileHaveAChessPiece(xcords + 1, ycords + 1) && isAChessPieceBlackOrWhite(xcords + 1, ycords + 1) == "black") { listOfPlayableMoves.Add((xcords + 1, ycords + 1)); }
+
+            // diagonal left chess piece take 
+            if (isInBoundsX(xcords - 1) && doesTileHaveAChessPiece(xcords - 1, ycords + 1) && isAChessPieceBlackOrWhite(xcords - 1, ycords + 1) == "black") { listOfPlayableMoves.Add((xcords - 1, ycords + 1)); }
+
+            // move up 1 tile 
+            if (doesTileHaveAChessPiece(xcords, ycords + 1)) { return listOfPlayableMoves; }
+            listOfPlayableMoves.Add((xcords, ycords + 1));
+
+            // move up 2 tiles 
+            if (doesTileHaveAChessPiece(xcords, ycords + 2)) { return listOfPlayableMoves; }
+
+            if (board[FindPosition(sender, board).Item1, FindPosition(sender, board).Item2].didTheFirstMove == false) { listOfPlayableMoves.Add((xcords, ycords + 2)); }
+            return listOfPlayableMoves;
+        }
+
+        private void blDiagonalTopLeftMoves(int xcords, int ycords)
+        {
+            for (int i = 1; i < 8; i++)
+            {
+                if (isInBoundsX(xcords - i) && isInBoundsY(ycords + i) && !doesTileHaveAChessPiece(xcords - i, ycords + i)) { listOfPlayableMoves.Add((xcords - i, ycords + i)); }
+                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords - i, ycords + i) && isAChessPieceBlackOrWhite(xcords - i, ycords + i) == "white") { listOfPlayableMoves.Add((xcords - i, ycords + i)); break; }
+                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords - i, ycords + i) && isAChessPieceBlackOrWhite(xcords - i, ycords + i) == "black") { break; }
+                else { break; }
+            }
+        }
+        private void blDiagonalTopRightMoves(int xcords, int ycords)
+        {
+            for (int i = 1; i < 8; i++)
+            {
+                if (isInBoundsX(xcords + i) && isInBoundsY(ycords + i) && !doesTileHaveAChessPiece(xcords + i, ycords + i)) { listOfPlayableMoves.Add((xcords + i, ycords + i)); }
+                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords + i, ycords + i) && isAChessPieceBlackOrWhite(xcords + i, ycords + i) == "white") { listOfPlayableMoves.Add((xcords + i, ycords + i)); break; }
+                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords + i, ycords + i) && isAChessPieceBlackOrWhite(xcords + i, ycords + i) == "black") { break; }
+                else { break; }
+            }
+        }
+
+        private void blDiagonalBottomLeftMoves(int xcords, int ycords)
+        {
+            for (int i = 1; i < 8; i++)
+            {
+                if (isInBoundsX(xcords - i) && isInBoundsY(ycords - i) && !doesTileHaveAChessPiece(xcords - i, ycords - i)) { listOfPlayableMoves.Add((xcords - i, ycords - i)); }
+                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords - i, ycords - i) && isAChessPieceBlackOrWhite(xcords - i, ycords - i) == "white") { listOfPlayableMoves.Add((xcords - i, ycords - i)); break; }
+                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords - i, ycords - i) && isAChessPieceBlackOrWhite(xcords - i, ycords - i) == "black") { break; }
+                else { break; }
+            }
+        }
+        private void blDiagonalBottomRightMoves(int xcords, int ycords)
+        {
+            for (int i = 1; i < 8; i++)
+            {
+                if (isInBoundsX(xcords + i) && isInBoundsY(ycords - i) && !doesTileHaveAChessPiece(xcords + i, ycords - i)) { listOfPlayableMoves.Add((xcords + i, ycords - i)); }
+                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords + i, ycords - i) && isAChessPieceBlackOrWhite(xcords + i, ycords - i) == "white") { listOfPlayableMoves.Add((xcords + i, ycords - i)); break; }
+                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords + i, ycords - i) && isAChessPieceBlackOrWhite(xcords + i, ycords - i) == "black") { break; }
+                else { break; }
+            }
+        }
+
+        private void blHorizontalRightMoves(int xcords, int ycords)
+        {
+            for (int i = 1; i < 8; i++)
+            {
+                if (isInBoundsX(xcords + i) && !doesTileHaveAChessPiece(xcords + i, ycords)) { listOfPlayableMoves.Add((xcords + i, ycords)); }
+                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords) && doesTileHaveAChessPiece(xcords + i, ycords) && isAChessPieceBlackOrWhite(xcords + i, ycords) == "white") { listOfPlayableMoves.Add((xcords + i, ycords)); break; }
+                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords) && doesTileHaveAChessPiece(xcords + i, ycords) && isAChessPieceBlackOrWhite(xcords + i, ycords) == "black") { break; }
+                else { break; }
+            }
+        }
+
+        private void blHorizontalLeftMoves(int xcords, int ycords)
+        {
+            for (int i = 1; i < 8; i++)
+            {
+                if (isInBoundsX(xcords - i) && !doesTileHaveAChessPiece(xcords - i, ycords)) { listOfPlayableMoves.Add((xcords - i, ycords)); }
+                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords) && doesTileHaveAChessPiece(xcords - i, ycords) && isAChessPieceBlackOrWhite(xcords - i, ycords) == "white") { listOfPlayableMoves.Add((xcords - i, ycords)); break; }
+                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords) && doesTileHaveAChessPiece(xcords - i, ycords) && isAChessPieceBlackOrWhite(xcords - i, ycords) == "black") { break; }
+                else { break; }
+            }
+        }
+
+        private void blVerticalTopMoves(int xcords, int ycords)
+        {
+            for (int i = 1; i < 8; i++)
+            {
+                if (isInBoundsY(ycords + i) && !doesTileHaveAChessPiece(xcords, ycords + i)) { listOfPlayableMoves.Add((xcords, ycords + i)); }
+                else if (isInBoundsX(xcords) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords, ycords + i) && isAChessPieceBlackOrWhite(xcords, ycords + i) == "white") { listOfPlayableMoves.Add((xcords, ycords + i)); break; }
+                else if (isInBoundsX(xcords) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords, ycords + i) && isAChessPieceBlackOrWhite(xcords, ycords + i) == "black") { break; }
+                else { break; }
+            }
+        }
+
+        private void blVerticalBottomMoves(int xcords, int ycords)
+        {
+            for (int i = 1; i < 8; i++)
+            {
+                if (isInBoundsY(ycords - i) && !doesTileHaveAChessPiece(xcords, ycords - i)) { listOfPlayableMoves.Add((xcords, ycords - i)); }
+                else if (isInBoundsX(xcords) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords, ycords - i) && isAChessPieceBlackOrWhite(xcords, ycords - i) == "white") { listOfPlayableMoves.Add((xcords, ycords - i)); break; }
+                else if (isInBoundsX(xcords) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords, ycords - i) && isAChessPieceBlackOrWhite(xcords, ycords - i) == "black") { break; }
+                else { break; }
+            }
+        }
+
+        private void blKnightMoves(int xcords, int ycords)
+        {
+            if (isInBoundsX(xcords + 1) && isInBoundsY(ycords + 2) && !doesTileHaveAChessPiece(xcords + 1, ycords + 2)) { listOfPlayableMoves.Add((xcords + 1, ycords + 2)); }
+            if (isInBoundsX(xcords + 1) && isInBoundsY(ycords + 2) && doesTileHaveAChessPiece(xcords + 1, ycords + 2) && isAChessPieceBlackOrWhite(xcords + 1, ycords + 2) == "white") { listOfPlayableMoves.Add((xcords + 1, ycords + 2)); }
+
+            if (isInBoundsX(xcords + 2) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords + 2, ycords + 1)) { listOfPlayableMoves.Add((xcords + 2, ycords + 1)); }
+            if (isInBoundsX(xcords + 2) && isInBoundsY(ycords + 1) && doesTileHaveAChessPiece(xcords + 2, ycords + 1) && isAChessPieceBlackOrWhite(xcords + 2, ycords + 1) == "white") { listOfPlayableMoves.Add((xcords + 2, ycords + 1)); }
+
+            if (isInBoundsX(xcords + 2) && isInBoundsY(ycords - 1) && !doesTileHaveAChessPiece(xcords + 2, ycords - 1)) { listOfPlayableMoves.Add((xcords + 2, ycords - 1)); }
+            if (isInBoundsX(xcords + 2) && isInBoundsY(ycords - 1) && doesTileHaveAChessPiece(xcords + 2, ycords - 1) && isAChessPieceBlackOrWhite(xcords + 2, ycords - 1) == "white") { listOfPlayableMoves.Add((xcords + 2, ycords - 1)); }
+
+            if (isInBoundsX(xcords + 1) && isInBoundsY(ycords - 2) && !doesTileHaveAChessPiece(xcords + 1, ycords - 2)) { listOfPlayableMoves.Add((xcords + 1, ycords - 2)); }
+            if (isInBoundsX(xcords + 1) && isInBoundsY(ycords - 2) && doesTileHaveAChessPiece(xcords + 1, ycords - 2) && isAChessPieceBlackOrWhite(xcords + 1, ycords - 2) == "white") { listOfPlayableMoves.Add((xcords + 1, ycords - 2)); }
+
+
+            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords + 2) && !doesTileHaveAChessPiece(xcords - 1, ycords + 2)) { listOfPlayableMoves.Add((xcords - 1, ycords + 2)); }
+            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords + 2) && doesTileHaveAChessPiece(xcords - 1, ycords + 2) && isAChessPieceBlackOrWhite(xcords - 1, ycords + 2) == "white") { listOfPlayableMoves.Add((xcords - 1, ycords + 2)); }
+
+            if (isInBoundsX(xcords - 2) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords - 2, ycords + 1)) { listOfPlayableMoves.Add((xcords - 2, ycords + 1)); }
+            if (isInBoundsX(xcords - 2) && isInBoundsY(ycords + 1) && doesTileHaveAChessPiece(xcords - 2, ycords + 1) && isAChessPieceBlackOrWhite(xcords - 2, ycords + 1) == "white") { listOfPlayableMoves.Add((xcords - 2, ycords + 1)); }
+
+            if (isInBoundsX(xcords - 2) && isInBoundsY(ycords - 1) && !doesTileHaveAChessPiece(xcords - 2, ycords - 1)) { listOfPlayableMoves.Add((xcords - 2, ycords - 1)); }
+            if (isInBoundsX(xcords - 2) && isInBoundsY(ycords - 1) && doesTileHaveAChessPiece(xcords - 2, ycords - 1) && isAChessPieceBlackOrWhite(xcords - 2, ycords - 1) == "white") { listOfPlayableMoves.Add((xcords - 2, ycords - 1)); }
+
+            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords - 2) && !doesTileHaveAChessPiece(xcords - 1, ycords - 2)) { listOfPlayableMoves.Add((xcords - 1, ycords - 2)); }
+            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords - 2) && doesTileHaveAChessPiece(xcords - 1, ycords - 2) && isAChessPieceBlackOrWhite(xcords - 1, ycords - 2) == "white") { listOfPlayableMoves.Add((xcords - 1, ycords - 2)); }
+
+        }
+
+        private List<(int, int)> blPawnMoves(object sender, int xcords, int ycords)
+
+        {
+            // diagonal right chess piece take 
+            if (isInBoundsX(xcords + 1) && doesTileHaveAChessPiece(xcords + 1, ycords - 1) && isAChessPieceBlackOrWhite(xcords + 1, ycords - 1) == "white") { listOfPlayableMoves.Add((xcords + 1, ycords - 1)); }
+
+            // diagonal left chess piece take 
+            if (isInBoundsX(xcords - 1) && doesTileHaveAChessPiece(xcords - 1, ycords - 1) && isAChessPieceBlackOrWhite(xcords - 1, ycords - 1) == "white") { listOfPlayableMoves.Add((xcords - 1, ycords - 1)); }
+
+            // move up 1 tile 
+            if (doesTileHaveAChessPiece(xcords, ycords - 1)) { return listOfPlayableMoves; }
+            listOfPlayableMoves.Add((xcords, ycords - 1));
+
+            // move up 2 tiles 
+            if (doesTileHaveAChessPiece(xcords, ycords - 2)) { return listOfPlayableMoves; }
+
+            if (board[FindPosition(sender, board).Item1, FindPosition(sender, board).Item2].didTheFirstMove == false) { listOfPlayableMoves.Add((xcords, ycords - 2)); }
+            return listOfPlayableMoves;
+        }
+
+
         private List<(int,int)> ruleset(object sender, int ycords, int xcords)
         {
             listOfPlayableMoves.Clear();
@@ -147,49 +449,113 @@ namespace ChessGame
 
                 // pawn moveset
                 case "♟️":
-                    // diagonal right chess piece take 
-                    if (isInBoundsX(xcords + 1) && doesTileHaveAChessPiece(xcords + 1, ycords + 1) && isAChessPieceBlackOrWhite(xcords+1,ycords+1) == "black") { listOfPlayableMoves.Add((xcords + 1, ycords + 1)); }
+                    switch (playerTurn)
+                    {
+                        case turn.whitesTurn:
+                            return whPawnMoves(sender,xcords,ycords);
+                            break;
 
-                    // diagonal left chess piece take 
-                    if (isInBoundsX(xcords - 1) && doesTileHaveAChessPiece(xcords - 1, ycords + 1) && isAChessPieceBlackOrWhite(xcords - 1, ycords + 1) == "black") { listOfPlayableMoves.Add((xcords - 1, ycords + 1)); }
-
-                    // move up 1 tile 
-                    if (doesTileHaveAChessPiece(xcords,ycords+1)) {return listOfPlayableMoves; }
-                    listOfPlayableMoves.Add((xcords,ycords + 1));
-
-                    // move up 2 tiles 
-                    if (doesTileHaveAChessPiece(xcords, ycords + 2)) { return listOfPlayableMoves; }
-
-                    if (board[FindPosition(sender, board).Item1, FindPosition(sender, board).Item2].didTheFirstMove == false) { listOfPlayableMoves.Add((xcords, ycords + 2)); }
-
-                    return listOfPlayableMoves;
+                        case turn.blacksTurn:
+                            return blPawnMoves(sender, xcords, ycords);
+                            break;
+                    }
                 break;
 
                 
                 // knight moveset
                 case "♘":
+                    switch (playerTurn)
+                    {
+                        case turn.whitesTurn:
+                            whKnightMoves(xcords, ycords);
+                        break;
 
+                        case turn.blacksTurn:
+                            blKnightMoves(xcords, ycords);
+                        break;
+                    }
                 break;
 
                 // bishop moveset
                 case "♗":
+                    switch (playerTurn)
+                    {
+                        case turn.whitesTurn:
+                            whDiagonalTopLeftMoves(xcords, ycords);
+                            whDiagonalTopRightMoves(xcords, ycords);
+                            whDiagonalBottomLeftMoves(xcords, ycords);
+                            whDiagonalBottomRightMoves(xcords, ycords);
+                        break;
 
-                break;
+                        case turn.blacksTurn:
+                            blDiagonalTopLeftMoves(xcords, ycords);
+                            blDiagonalTopRightMoves(xcords, ycords);
+                            blDiagonalBottomLeftMoves(xcords, ycords);
+                            blDiagonalBottomRightMoves(xcords, ycords);
+                        break;
+                    }
+
+                    break;
 
                 // rook moveset
                 case "♖":
+                    switch (playerTurn)
+                    {
+                        case turn.whitesTurn:
+                            whVerticalBottomMoves(xcords, ycords);
+                            whVerticalTopMoves(xcords, ycords);
+                            whHorizontalLeftMoves(xcords, ycords);
+                            whHorizontalRightMoves(xcords, ycords);
+                        break;
 
+                        case turn.blacksTurn:
+                            blVerticalBottomMoves(xcords, ycords);
+                            blVerticalTopMoves(xcords, ycords);
+                            blHorizontalLeftMoves(xcords, ycords);
+                            blHorizontalRightMoves(xcords, ycords);
+                        break;
+                    }
                 break;
 
                 // queen moveset
                 case "♕":
+                    switch (playerTurn)
+                    {
+                        case turn.whitesTurn:
+                            whDiagonalTopLeftMoves(xcords, ycords);
+                            whDiagonalTopRightMoves(xcords, ycords);
+                            whDiagonalBottomLeftMoves(xcords, ycords);
+                            whDiagonalBottomRightMoves(xcords, ycords);
+                            whVerticalBottomMoves(xcords, ycords);
+                            whVerticalTopMoves(xcords, ycords);
+                            whHorizontalLeftMoves(xcords, ycords);
+                            whHorizontalRightMoves(xcords, ycords);
+                        break;
 
-                break;
+                        case turn.blacksTurn:
+                            blDiagonalTopLeftMoves(xcords, ycords);
+                            blDiagonalTopRightMoves(xcords, ycords);
+                            blDiagonalBottomLeftMoves(xcords, ycords);
+                            blDiagonalBottomRightMoves(xcords, ycords);
+                            blVerticalBottomMoves(xcords, ycords);
+                            blVerticalTopMoves(xcords, ycords);
+                            blHorizontalLeftMoves(xcords, ycords);
+                            blHorizontalRightMoves(xcords, ycords);
+                        break;
+                    }
+
+                    break;
 
                 // king moveset
                 case "♔":
-
-                break;
+                    switch (playerTurn)
+                    {
+                        case turn.whitesTurn:
+                            break;
+                        case turn.blacksTurn:
+                            break;
+                    }
+                    break;
 
             }
             return null;
