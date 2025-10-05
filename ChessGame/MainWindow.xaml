@@ -19,7 +19,7 @@
                 <TextBlock MouseDown="selectTile" Name="b8" Width="100" Height="100" Background="#57391f" Foreground="Black" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♘</TextBlock>
                 <TextBlock MouseDown="selectTile" Name="c8" Width="100" Height="100" Background="#b09278" Foreground="Black" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♗</TextBlock>
                 <TextBlock MouseDown="selectTile" Name="d8" Width="100" Height="100" Background="#57391f" Foreground="Black" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♕</TextBlock>
-                <TextBlock  Name="e8" Width="100" Height="100" Background="#b09278" Foreground="Black" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♔</TextBlock>
+                <TextBlock MouseDown="selectTile"  Name="e8" Width="100" Height="100" Background="#b09278" Foreground="Black" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♔</TextBlock>
                 <TextBlock MouseDown="selectTile" Name="f8" Width="100" Height="100" Background="#57391f" Foreground="Black" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♗</TextBlock>
                 <TextBlock MouseDown="selectTile" Name="g8" Width="100" Height="100" Background="#b09278" Foreground="Black" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♘</TextBlock>
                 <TextBlock MouseDown="selectTile" Name="h8" Width="100" Height="100" Background="#57391f" Foreground="Black" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♖</TextBlock>
@@ -96,7 +96,7 @@
                 <TextBlock MouseDown="selectTile" Name="b1" Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♘</TextBlock>
                 <TextBlock MouseDown="selectTile" Name="c1" Width="100" Height="100" Background="#57391f" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♗</TextBlock>
                 <TextBlock MouseDown="selectTile" Name="d1" Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♕</TextBlock>
-                <TextBlock Name="e1" Width="100" Height="100" Background="#57391f" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♔</TextBlock>
+                <TextBlock MouseDown="selectTile" Name="e1" Width="100" Height="100" Background="#57391f" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♔</TextBlock>
                 <TextBlock MouseDown="selectTile" Name="f1" Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♗</TextBlock>
                 <TextBlock MouseDown="selectTile" Name="g1" Width="100" Height="100" Background="#57391f" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♘</TextBlock>
                 <TextBlock MouseDown="selectTile" Name="h1" Width="100" Height="100" Background="#b09278" Foreground="White" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♖</TextBlock>

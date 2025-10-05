@@ -21,10 +21,12 @@ namespace ChessGame
     {
         Tile[,] board = new Tile[8, 8];
         List<(int,int)> listOfPlayableMoves = new List<(int,int)>();
+        List<(int,int)> listOfDangerousMoves = new List<(int,int)>();
         String boardRow;
         selectTileState phase = selectTileState.select;
         turn playerTurn = turn.whitesTurn;
         object currentSender;
+        bool isKingInCheck = false;
         enum selectTileState
         {
             select,
@@ -50,12 +52,25 @@ namespace ChessGame
         {
             InitializeComponent();
             this.Loaded += MainWindow_Loaded;
+            this.KeyDown += new KeyEventHandler(DebugShow);
 
         }
+
+        private void DebugShow(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter) {
+                foreach (var dangerousmoves in listOfDangerousMoves) {
+                    ((TextBlock)chessboard.FindName(board[dangerousmoves.Item1, dangerousmoves.Item2].Name)).Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#FFFF0000");
+                    System.Diagnostics.Debug.WriteLine(playerTurn);
+                }
+            }
+
+        }
+
         public void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             AssignNamesToBoardTiles();
-            
+            isKingChecked();
         }
 
 
@@ -65,11 +80,12 @@ namespace ChessGame
 
         private void selectTile(object sender, MouseButtonEventArgs e)
         {
+            
             if (((TextBlock)sender).Text == "" && phase == selectTileState.select) { return; }
 
             switch (phase)
             {
-                
+
                 case selectTileState.select:
                     if (((TextBlock)sender).Foreground == Brushes.White && playerTurn == turn.whitesTurn || ((TextBlock)sender).Foreground == Brushes.Black && playerTurn == turn.blacksTurn)
                     {
@@ -82,14 +98,12 @@ namespace ChessGame
 
                         ColorTileByPosition(ruleset(sender, FindPosition(sender, board).Item2, FindPosition(sender, board).Item1));
 
-                        foreach (var moves in listOfPlayableMoves)
-                        {
-                            System.Diagnostics.Debug.WriteLine(moves);
-                        }
+                        
+
 
                         phase = selectTileState.move;
                     }
-                        break;
+                    break;
 
                 case selectTileState.move:
                     ClearTileColorByPosition(listOfPlayableMoves, currentSender);
@@ -98,17 +112,6 @@ namespace ChessGame
 
 
                     phase = selectTileState.select;
-
-                    if (playerTurn == turn.whitesTurn)
-                    {
-                        playerTurn = turn.blacksTurn;
-                    }
-                    else if (playerTurn == turn.blacksTurn)
-                    {
-                        playerTurn = turn.whitesTurn;
-                    }
-                    System.Diagnostics.Debug.WriteLine(playerTurn);
-
                     break;
 
             }
@@ -128,6 +131,8 @@ namespace ChessGame
                     ((TextBlock)sender).Text = ((TextBlock)previousSender).Text;
                     ((TextBlock)sender).Foreground = ((TextBlock)previousSender).Foreground;
                     ((TextBlock)previousSender).Text = "";
+                    switchTurns();
+                    isKingChecked();
                 }
             }
             if(((TextBlock)sender).Text == "♟️")
@@ -285,26 +290,6 @@ namespace ChessGame
 
         }
 
-        private List<(int,int)> whPawnMoves(object sender,int xcords, int ycords)
-
-        {
-            // diagonal right chess piece take 
-            if (isInBoundsX(xcords + 1) && doesTileHaveAChessPiece(xcords + 1, ycords + 1) && isAChessPieceBlackOrWhite(xcords + 1, ycords + 1) == "black") { listOfPlayableMoves.Add((xcords + 1, ycords + 1)); }
-
-            // diagonal left chess piece take 
-            if (isInBoundsX(xcords - 1) && doesTileHaveAChessPiece(xcords - 1, ycords + 1) && isAChessPieceBlackOrWhite(xcords - 1, ycords + 1) == "black") { listOfPlayableMoves.Add((xcords - 1, ycords + 1)); }
-
-            // move up 1 tile 
-            if (doesTileHaveAChessPiece(xcords, ycords + 1)) { return listOfPlayableMoves; }
-            listOfPlayableMoves.Add((xcords, ycords + 1));
-
-            // move up 2 tiles 
-            if (doesTileHaveAChessPiece(xcords, ycords + 2)) { return listOfPlayableMoves; }
-
-            if (board[FindPosition(sender, board).Item1, FindPosition(sender, board).Item2].didTheFirstMove == false) { listOfPlayableMoves.Add((xcords, ycords + 2)); }
-            return listOfPlayableMoves;
-        }
-
         private void blDiagonalTopLeftMoves(int xcords, int ycords)
         {
             for (int i = 1; i < 8; i++)
@@ -420,6 +405,25 @@ namespace ChessGame
 
         }
 
+        private List<(int,int)> whPawnMoves(object sender,int xcords, int ycords)
+
+        {
+            // diagonal right chess piece take 
+            if (isInBoundsX(xcords + 1) && doesTileHaveAChessPiece(xcords + 1, ycords + 1) && isAChessPieceBlackOrWhite(xcords + 1, ycords + 1) == "black") { listOfPlayableMoves.Add((xcords + 1, ycords + 1)); }
+
+            // diagonal left chess piece take 
+            if (isInBoundsX(xcords - 1) && doesTileHaveAChessPiece(xcords - 1, ycords + 1) && isAChessPieceBlackOrWhite(xcords - 1, ycords + 1) == "black") { listOfPlayableMoves.Add((xcords - 1, ycords + 1)); }
+
+            // move up 1 tile 
+            if (doesTileHaveAChessPiece(xcords, ycords + 1)) { return listOfPlayableMoves; }
+            listOfPlayableMoves.Add((xcords, ycords + 1));
+
+            // move up 2 tiles 
+            if (doesTileHaveAChessPiece(xcords, ycords + 2)) { return listOfPlayableMoves; }
+
+            if (board[FindPosition(sender, board).Item1, FindPosition(sender, board).Item2].didTheFirstMove == false) { listOfPlayableMoves.Add((xcords, ycords + 2)); }
+            return listOfPlayableMoves;
+        }
         private List<(int, int)> blPawnMoves(object sender, int xcords, int ycords)
 
         {
@@ -439,7 +443,6 @@ namespace ChessGame
             if (board[FindPosition(sender, board).Item1, FindPosition(sender, board).Item2].didTheFirstMove == false) { listOfPlayableMoves.Add((xcords, ycords - 2)); }
             return listOfPlayableMoves;
         }
-
 
         private List<(int,int)> ruleset(object sender, int ycords, int xcords)
         {
@@ -551,8 +554,25 @@ namespace ChessGame
                     switch (playerTurn)
                     {
                         case turn.whitesTurn:
+                            if (isInBoundsX(xcords) && isInBoundsY(ycords+1) && !doesTileHaveAChessPiece(xcords, ycords+1) && isTileSafe(board[xcords,ycords+1].Name)){ listOfPlayableMoves.Add((xcords, ycords + 1)); }
+                            if (isInBoundsX(xcords+1) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords+1, ycords + 1) && isTileSafe(board[xcords+1, ycords + 1].Name)) { listOfPlayableMoves.Add((xcords+1, ycords + 1)); }
+                            if (isInBoundsX(xcords+1) && isInBoundsY(ycords) && !doesTileHaveAChessPiece(xcords+1, ycords) && isTileSafe(board[xcords+1, ycords].Name)) { listOfPlayableMoves.Add((xcords+1, ycords)); }
+                            if (isInBoundsX(xcords+1) && isInBoundsY(ycords - 1) && !doesTileHaveAChessPiece(xcords+1, ycords - 1) && isTileSafe(board[xcords+1, ycords - 1].Name)) { listOfPlayableMoves.Add((xcords+1, ycords - 1)); }
+                            if (isInBoundsX(xcords) && isInBoundsY(ycords - 1) && !doesTileHaveAChessPiece(xcords, ycords - 1) && isTileSafe(board[xcords, ycords - 1].Name)) { listOfPlayableMoves.Add((xcords, ycords - 1)); }
+                            if (isInBoundsX(xcords-1) && isInBoundsY(ycords - 1) && !doesTileHaveAChessPiece(xcords-1, ycords - 1) && isTileSafe(board[xcords-1, ycords - 1].Name)) { listOfPlayableMoves.Add((xcords-1, ycords - 1)); }
+                            if (isInBoundsX(xcords-1) && isInBoundsY(ycords) && !doesTileHaveAChessPiece(xcords-1, ycords) && isTileSafe(board[xcords-1, ycords].Name)) { listOfPlayableMoves.Add((xcords-1, ycords)); }
+                            if (isInBoundsX(xcords-1) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords-1, ycords + 1) && isTileSafe(board[xcords-1, ycords + 1].Name)) { listOfPlayableMoves.Add((xcords-1, ycords + 1)); }
+
                             break;
                         case turn.blacksTurn:
+                            if (isInBoundsX(xcords) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords, ycords + 1) && isTileSafe(board[xcords, ycords + 1].Name)) { listOfPlayableMoves.Add((xcords, ycords + 1)); }
+                            if (isInBoundsX(xcords + 1) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords + 1, ycords + 1) && isTileSafe(board[xcords + 1, ycords + 1].Name)) { listOfPlayableMoves.Add((xcords + 1, ycords + 1)); }
+                            if (isInBoundsX(xcords + 1) && isInBoundsY(ycords) && !doesTileHaveAChessPiece(xcords + 1, ycords) && isTileSafe(board[xcords + 1, ycords].Name)) { listOfPlayableMoves.Add((xcords + 1, ycords)); }
+                            if (isInBoundsX(xcords + 1) && isInBoundsY(ycords - 1) && !doesTileHaveAChessPiece(xcords + 1, ycords - 1) && isTileSafe(board[xcords + 1, ycords - 1].Name)) { listOfPlayableMoves.Add((xcords + 1, ycords - 1)); }
+                            if (isInBoundsX(xcords) && isInBoundsY(ycords - 1) && !doesTileHaveAChessPiece(xcords, ycords - 1) && isTileSafe(board[xcords, ycords - 1].Name)) { listOfPlayableMoves.Add((xcords, ycords - 1)); }
+                            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords - 1) && !doesTileHaveAChessPiece(xcords - 1, ycords - 1) && isTileSafe(board[xcords - 1, ycords - 1].Name)) { listOfPlayableMoves.Add((xcords - 1, ycords - 1)); }
+                            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords) && !doesTileHaveAChessPiece(xcords - 1, ycords) && isTileSafe(board[xcords - 1, ycords].Name)) { listOfPlayableMoves.Add((xcords - 1, ycords)); }
+                            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords - 1, ycords + 1) && isTileSafe(board[xcords - 1, ycords + 1].Name)) { listOfPlayableMoves.Add((xcords - 1, ycords + 1)); }
                             break;
                     }
                     break;
@@ -561,8 +581,200 @@ namespace ChessGame
             return null;
         }
 
+        private bool isTileSafe(string selectedTile)
+        {
+            foreach (var tile in listOfDangerousMoves)
+            {
+                if (board[tile.Item1,tile.Item2].Name == selectedTile)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
 
+        private void switchTurns()
+        {
+            if (playerTurn == turn.whitesTurn)
+            {
+                playerTurn = turn.blacksTurn;
+            }
+            else if (playerTurn == turn.blacksTurn)
+            {
+                playerTurn = turn.whitesTurn;
+            }
+            System.Diagnostics.Debug.WriteLine(playerTurn);
+        }
 
+        private void findAllDangerousTiles()
+        {
+            listOfDangerousMoves.Clear();
+            for (int i = 0; i <= 7; i++)
+            {
+                for (int j = 0; j <= 7; j++)
+                {
+                    switch (((TextBlock)chessboard.FindName(board[i, j].Name)).Text)
+                    {
+                        case "♟️":
+                            switch (playerTurn)
+                            {
+                                case turn.whitesTurn:
+                                    if (isAChessPieceBlackOrWhite(i, j) == "black")
+                                    {
+                                        if (isInBoundsX(i + 1) && isInBoundsY(j - 1)) { listOfDangerousMoves.Add((i + 1, j - 1)); }
+
+                                        if (isInBoundsX(i - 1) && isInBoundsY(j - 1)) { listOfDangerousMoves.Add((i - 1, j - 1)); }
+                                    }
+                                    break;
+
+                                case turn.blacksTurn:
+                                    if (isAChessPieceBlackOrWhite(i, j) == "white")
+                                    {
+                                        if (isInBoundsX(i + 1) && isInBoundsY(j + 1)) { listOfDangerousMoves.Add((i + 1, j + 1)); }
+
+                                        if (isInBoundsX(i - 1) && isInBoundsY(j + 1)) { listOfDangerousMoves.Add((i - 1, j + 1)); }
+                                    }
+                                    break;
+                            }
+                            break;
+
+                        case "♘":
+                            switch (playerTurn)
+                            {
+                                case turn.whitesTurn:
+                                    if (isAChessPieceBlackOrWhite(i, j) == "black")
+                                    {
+                                        blKnightMovesDANGER(i, j);
+                                    }
+                                    break;
+                                case turn.blacksTurn:
+                                    if (isAChessPieceBlackOrWhite(i, j) == "white")
+                                    {
+                                        whKnightMovesDANGER(i, j);
+                                    }
+                                    break;
+                            }
+                            break;
+
+                        case "♗":
+                            switch (playerTurn)
+                            {
+                                case turn.whitesTurn:
+                                    if (isAChessPieceBlackOrWhite(i, j) == "black")
+                                    {
+                                        blDiagonalBottomLeftMovesDANGER(i, j);
+                                        blDiagonalBottomRightMovesDANGER(i, j);
+                                        blDiagonalTopLeftMovesDANGER(i, j);
+                                        blDiagonalTopRightMovesDANGER(i, j);
+                                    }
+                                    break;
+                                case turn.blacksTurn:
+                                    if (isAChessPieceBlackOrWhite(i, j) == "white")
+                                    {
+                                        whDiagonalBottomLeftMovesDANGER(i, j);
+                                        whDiagonalBottomRightMovesDANGER(i, j);
+                                        whDiagonalTopLeftMovesDANGER(i, j);
+                                        whDiagonalTopRightMovesDANGER(i, j);
+                                    }
+                                    break;
+                            }
+
+                            break;
+
+                        case "♖":
+                            switch (playerTurn)
+                            {
+                                case turn.whitesTurn:
+                                    if (isAChessPieceBlackOrWhite(i, j) == "black")
+                                    {
+                                        blHorizontalLeftMovesDANGER(i, j);
+                                        blHorizontalRightMovesDANGER(i, j);
+                                        blVerticalBottomMovesDANGER(i, j);
+                                        blVerticalTopMovesDANGER(i, j);
+                                    }
+                                    break;
+                                case turn.blacksTurn:
+                                    if (isAChessPieceBlackOrWhite(i, j) == "white")
+                                    {
+                                        whHorizontalLeftMovesDANGER(i, j);
+                                        whHorizontalRightMovesDANGER(i, j);
+                                        whVerticalBottomMovesDANGER(i, j);
+                                        whVerticalTopMovesDANGER(i, j);
+                                    }
+                                    break;
+                            }
+                            break;
+
+                        case "♕":
+                            switch (playerTurn)
+                            {
+                                case turn.whitesTurn:
+                                    if (isAChessPieceBlackOrWhite(i, j) == "black")
+                                    {
+                                        blDiagonalBottomLeftMovesDANGER(i, j);
+                                        blDiagonalBottomRightMovesDANGER(i, j);
+                                        blDiagonalTopLeftMovesDANGER(i, j);
+                                        blDiagonalTopRightMovesDANGER(i, j);
+                                        blHorizontalLeftMovesDANGER(i, j);
+                                        blHorizontalRightMovesDANGER(i, j);
+                                        blVerticalBottomMovesDANGER(i, j);
+                                        blVerticalTopMovesDANGER(i, j);
+                                    }
+                                    break;
+                                case turn.blacksTurn:
+                                    if (isAChessPieceBlackOrWhite(i, j) == "white")
+                                    {
+                                        whDiagonalBottomLeftMovesDANGER(i, j);
+                                        whDiagonalBottomRightMovesDANGER(i, j);
+                                        whDiagonalTopLeftMovesDANGER(i, j);
+                                        whDiagonalTopRightMovesDANGER(i, j);
+                                        whHorizontalLeftMovesDANGER(i, j);
+                                        whHorizontalRightMovesDANGER(i, j);
+                                        whVerticalBottomMovesDANGER(i, j);
+                                        whVerticalTopMovesDANGER(i, j);
+                                    }
+                                    break;
+                            }
+                            break;
+                    }
+                }
+            }
+        }
+
+        private string findKing()
+        {
+            for(int i = 0; i<8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    if (((TextBlock)chessboard.FindName(board[i, j].Name)).Text == "♔")
+                    {
+                        return board[i, j].Name;
+                    }
+                }
+            }
+            return null;
+        }
+
+        private void isKingChecked()
+        {
+            findAllDangerousTiles();
+
+            foreach (var danger in listOfDangerousMoves)
+            {
+                if (board[danger.Item1,danger.Item2].Name == findKing())
+                {
+                    isKingInCheck = true;
+                    break;
+                }
+                else
+                {
+                    isKingInCheck = false;
+                }
+            }
+            
+
+        }
 
         public void ClearTileColorByPosition(List<(int,int)> position, object sender)
         {
@@ -669,11 +881,239 @@ namespace ChessGame
         }
 
 
+        private void whDiagonalTopLeftMovesDANGER(int xcords, int ycords)
+        {
+            for (int i = 1; i < 8; i++)
+            {
+                if (isInBoundsX(xcords - i) && isInBoundsY(ycords + i) && !doesTileHaveAChessPiece(xcords - i, ycords + i)) { listOfDangerousMoves.Add((xcords - i, ycords + i)); }
+                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords - i, ycords + i) && isAChessPieceBlackOrWhite(xcords - i, ycords + i) == "black") { listOfDangerousMoves.Add((xcords - i, ycords + i)); break; }
+                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords - i, ycords + i) && isAChessPieceBlackOrWhite(xcords - i, ycords + i) == "white") { break; }
+                else { break; }
+            }
+        }
+        private void whDiagonalTopRightMovesDANGER(int xcords, int ycords)
+        {
+            for (int i = 1; i < 8; i++)
+            {
+                if (isInBoundsX(xcords + i) && isInBoundsY(ycords + i) && !doesTileHaveAChessPiece(xcords + i, ycords + i)) { listOfDangerousMoves.Add((xcords + i, ycords + i)); }
+                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords + i, ycords + i) && isAChessPieceBlackOrWhite(xcords + i, ycords + i) == "black") { listOfDangerousMoves.Add((xcords + i, ycords + i)); break; }
+                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords + i, ycords + i) && isAChessPieceBlackOrWhite(xcords + i, ycords + i) == "white") { break; }
+                else { break; }
+            }
+        }
+
+        private void whDiagonalBottomLeftMovesDANGER(int xcords, int ycords)
+        {
+            for (int i = 1; i < 8; i++)
+            {
+                if (isInBoundsX(xcords - i) && isInBoundsY(ycords - i) && !doesTileHaveAChessPiece(xcords - i, ycords - i)) { listOfDangerousMoves.Add((xcords - i, ycords - i)); }
+                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords - i, ycords - i) && isAChessPieceBlackOrWhite(xcords - i, ycords - i) == "black") { listOfDangerousMoves.Add((xcords - i, ycords - i)); break; }
+                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords - i, ycords - i) && isAChessPieceBlackOrWhite(xcords - i, ycords - i) == "white") { break; }
+                else { break; }
+            }
+        }
+        private void whDiagonalBottomRightMovesDANGER(int xcords, int ycords)
+        {
+            for (int i = 1; i < 8; i++)
+            {
+                if (isInBoundsX(xcords + i) && isInBoundsY(ycords - i) && !doesTileHaveAChessPiece(xcords + i, ycords - i)) { listOfDangerousMoves.Add((xcords + i, ycords - i)); }
+                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords + i, ycords - i) && isAChessPieceBlackOrWhite(xcords + i, ycords - i) == "black") { listOfDangerousMoves.Add((xcords + i, ycords - i)); break; }
+                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords + i, ycords - i) && isAChessPieceBlackOrWhite(xcords + i, ycords - i) == "white") { break; }
+                else { break; }
+            }
+        }
+
+        private void whHorizontalRightMovesDANGER(int xcords, int ycords)
+        {
+            for (int i = 1; i < 8; i++)
+            {
+                if (isInBoundsX(xcords + i) && !doesTileHaveAChessPiece(xcords + i, ycords)) { listOfDangerousMoves.Add((xcords + i, ycords)); }
+                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords) && doesTileHaveAChessPiece(xcords + i, ycords) && isAChessPieceBlackOrWhite(xcords + i, ycords) == "black") { listOfDangerousMoves.Add((xcords + i, ycords)); break; }
+                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords) && doesTileHaveAChessPiece(xcords + i, ycords) && isAChessPieceBlackOrWhite(xcords + i, ycords) == "white") { break; }
+                else { break; }
+            }
+        }
+
+        private void whHorizontalLeftMovesDANGER(int xcords, int ycords)
+        {
+            for (int i = 1; i < 8; i++)
+            {
+                if (isInBoundsX(xcords - i) && !doesTileHaveAChessPiece(xcords - i, ycords)) { listOfDangerousMoves.Add((xcords - i, ycords)); }
+                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords) && doesTileHaveAChessPiece(xcords - i, ycords) && isAChessPieceBlackOrWhite(xcords - i, ycords) == "black") { listOfDangerousMoves.Add((xcords - i, ycords)); break; }
+                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords) && doesTileHaveAChessPiece(xcords - i, ycords) && isAChessPieceBlackOrWhite(xcords - i, ycords) == "white") { break; }
+                else { break; }
+            }
+        }
+
+        private void whVerticalTopMovesDANGER(int xcords, int ycords)
+        {
+            for (int i = 1; i < 8; i++)
+            {
+                if (isInBoundsY(ycords + i) && !doesTileHaveAChessPiece(xcords, ycords + i)) { listOfDangerousMoves.Add((xcords, ycords + i)); }
+                else if (isInBoundsX(xcords) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords, ycords + i) && isAChessPieceBlackOrWhite(xcords, ycords + i) == "black") { listOfDangerousMoves.Add((xcords, ycords + i)); break; }
+                else if (isInBoundsX(xcords) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords, ycords + i) && isAChessPieceBlackOrWhite(xcords, ycords + i) == "white") { break; }
+                else { break; }
+            }
+        }
+
+        private void whVerticalBottomMovesDANGER(int xcords, int ycords)
+        {
+            for (int i = 1; i < 8; i++)
+            {
+                if (isInBoundsY(ycords - i) && !doesTileHaveAChessPiece(xcords, ycords - i)) { listOfDangerousMoves.Add((xcords, ycords - i)); }
+                else if (isInBoundsX(xcords) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords, ycords - i) && isAChessPieceBlackOrWhite(xcords, ycords - i) == "black") { listOfDangerousMoves.Add((xcords, ycords - i)); break; }
+                else if (isInBoundsX(xcords) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords, ycords - i) && isAChessPieceBlackOrWhite(xcords, ycords - i) == "white") { break; }
+                else { break; }
+            }
+        }
+
+        private void whKnightMovesDANGER(int xcords, int ycords)
+        {
+            if (isInBoundsX(xcords + 1) && isInBoundsY(ycords + 2) && !doesTileHaveAChessPiece(xcords + 1, ycords + 2)) { listOfDangerousMoves.Add((xcords + 1, ycords + 2)); }
+            if (isInBoundsX(xcords + 1) && isInBoundsY(ycords + 2) && doesTileHaveAChessPiece(xcords + 1, ycords + 2) && isAChessPieceBlackOrWhite(xcords + 1, ycords + 2) == "black") { listOfDangerousMoves.Add((xcords + 1, ycords + 2)); }
+
+            if (isInBoundsX(xcords + 2) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords + 2, ycords + 1)) { listOfDangerousMoves.Add((xcords + 2, ycords + 1)); }
+            if (isInBoundsX(xcords + 2) && isInBoundsY(ycords + 1) && doesTileHaveAChessPiece(xcords + 2, ycords + 1) && isAChessPieceBlackOrWhite(xcords + 2, ycords + 1) == "black") { listOfDangerousMoves.Add((xcords + 2, ycords + 1)); }
+
+            if (isInBoundsX(xcords + 2) && isInBoundsY(ycords - 1) && !doesTileHaveAChessPiece(xcords + 2, ycords - 1)) { listOfDangerousMoves.Add((xcords + 2, ycords - 1)); }
+            if (isInBoundsX(xcords + 2) && isInBoundsY(ycords - 1) && doesTileHaveAChessPiece(xcords + 2, ycords - 1) && isAChessPieceBlackOrWhite(xcords + 2, ycords - 1) == "black") { listOfDangerousMoves.Add((xcords + 2, ycords - 1)); }
+
+            if (isInBoundsX(xcords + 1) && isInBoundsY(ycords - 2) && !doesTileHaveAChessPiece(xcords + 1, ycords - 2)) { listOfDangerousMoves.Add((xcords + 1, ycords - 2)); }
+            if (isInBoundsX(xcords + 1) && isInBoundsY(ycords - 2) && doesTileHaveAChessPiece(xcords + 1, ycords - 2) && isAChessPieceBlackOrWhite(xcords + 1, ycords - 2) == "black") { listOfDangerousMoves.Add((xcords + 1, ycords - 2)); }
+
+
+            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords + 2) && !doesTileHaveAChessPiece(xcords - 1, ycords + 2)) { listOfDangerousMoves.Add((xcords - 1, ycords + 2)); }
+            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords + 2) && doesTileHaveAChessPiece(xcords - 1, ycords + 2) && isAChessPieceBlackOrWhite(xcords - 1, ycords + 2) == "black") { listOfDangerousMoves.Add((xcords - 1, ycords + 2)); }
+
+            if (isInBoundsX(xcords - 2) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords - 2, ycords + 1)) { listOfDangerousMoves.Add((xcords - 2, ycords + 1)); }
+            if (isInBoundsX(xcords - 2) && isInBoundsY(ycords + 1) && doesTileHaveAChessPiece(xcords - 2, ycords + 1) && isAChessPieceBlackOrWhite(xcords - 2, ycords + 1) == "black") { listOfDangerousMoves.Add((xcords - 2, ycords + 1)); }
+
+            if (isInBoundsX(xcords - 2) && isInBoundsY(ycords - 1) && !doesTileHaveAChessPiece(xcords - 2, ycords - 1)) { listOfDangerousMoves.Add((xcords - 2, ycords - 1)); }
+            if (isInBoundsX(xcords - 2) && isInBoundsY(ycords - 1) && doesTileHaveAChessPiece(xcords - 2, ycords - 1) && isAChessPieceBlackOrWhite(xcords - 2, ycords - 1) == "black") { listOfDangerousMoves.Add((xcords - 2, ycords - 1)); }
+
+            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords - 2) && !doesTileHaveAChessPiece(xcords - 1, ycords - 2)) { listOfDangerousMoves.Add((xcords - 1, ycords - 2)); }
+            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords - 2) && doesTileHaveAChessPiece(xcords - 1, ycords - 2) && isAChessPieceBlackOrWhite(xcords - 1, ycords - 2) == "black") { listOfDangerousMoves.Add((xcords - 1, ycords - 2)); }
+
+        }
+
+        private void blDiagonalTopLeftMovesDANGER(int xcords, int ycords)
+        {
+            for (int i = 1; i < 8; i++)
+            {
+                if (isInBoundsX(xcords - i) && isInBoundsY(ycords + i) && !doesTileHaveAChessPiece(xcords - i, ycords + i)) { listOfDangerousMoves.Add((xcords - i, ycords + i)); }
+                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords - i, ycords + i) && isAChessPieceBlackOrWhite(xcords - i, ycords + i) == "white") { listOfDangerousMoves.Add((xcords - i, ycords + i)); break; }
+                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords - i, ycords + i) && isAChessPieceBlackOrWhite(xcords - i, ycords + i) == "black") { break; }
+                else { break; }
+            }
+        }
+        private void blDiagonalTopRightMovesDANGER(int xcords, int ycords)
+        {
+            for (int i = 1; i < 8; i++)
+            {
+                if (isInBoundsX(xcords + i) && isInBoundsY(ycords + i) && !doesTileHaveAChessPiece(xcords + i, ycords + i)) { listOfDangerousMoves.Add((xcords + i, ycords + i)); }
+                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords + i, ycords + i) && isAChessPieceBlackOrWhite(xcords + i, ycords + i) == "white") { listOfDangerousMoves.Add((xcords + i, ycords + i)); break; }
+                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords + i, ycords + i) && isAChessPieceBlackOrWhite(xcords + i, ycords + i) == "black") { break; }
+                else { break; }
+            }
+        }
+
+        private void blDiagonalBottomLeftMovesDANGER(int xcords, int ycords)
+        {
+            for (int i = 1; i < 8; i++)
+            {
+                if (isInBoundsX(xcords - i) && isInBoundsY(ycords - i) && !doesTileHaveAChessPiece(xcords - i, ycords - i)) { listOfDangerousMoves.Add((xcords - i, ycords - i)); }
+                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords - i, ycords - i) && isAChessPieceBlackOrWhite(xcords - i, ycords - i) == "white") { listOfDangerousMoves.Add((xcords - i, ycords - i)); break; }
+                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords - i, ycords - i) && isAChessPieceBlackOrWhite(xcords - i, ycords - i) == "black") { break; }
+                else { break; }
+            }
+        }
+        private void blDiagonalBottomRightMovesDANGER(int xcords, int ycords)
+        {
+            for (int i = 1; i < 8; i++)
+            {
+                if (isInBoundsX(xcords + i) && isInBoundsY(ycords - i) && !doesTileHaveAChessPiece(xcords + i, ycords - i)) { listOfDangerousMoves.Add((xcords + i, ycords - i)); }
+                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords + i, ycords - i) && isAChessPieceBlackOrWhite(xcords + i, ycords - i) == "white") { listOfDangerousMoves.Add((xcords + i, ycords - i)); break; }
+                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords + i, ycords - i) && isAChessPieceBlackOrWhite(xcords + i, ycords - i) == "black") { break; }
+                else { break; }
+            }
+        }
+
+        private void blHorizontalRightMovesDANGER(int xcords, int ycords)
+        {
+            for (int i = 1; i < 8; i++)
+            {
+                if (isInBoundsX(xcords + i) && !doesTileHaveAChessPiece(xcords + i, ycords)) { listOfDangerousMoves.Add((xcords + i, ycords)); }
+                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords) && doesTileHaveAChessPiece(xcords + i, ycords) && isAChessPieceBlackOrWhite(xcords + i, ycords) == "white") { listOfDangerousMoves.Add((xcords + i, ycords)); break; }
+                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords) && doesTileHaveAChessPiece(xcords + i, ycords) && isAChessPieceBlackOrWhite(xcords + i, ycords) == "black") { break; }
+                else { break; }
+            }
+        }
+
+        private void blHorizontalLeftMovesDANGER(int xcords, int ycords)
+        {
+            for (int i = 1; i < 8; i++)
+            {
+                if (isInBoundsX(xcords - i) && !doesTileHaveAChessPiece(xcords - i, ycords)) { listOfDangerousMoves.Add((xcords - i, ycords)); }
+                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords) && doesTileHaveAChessPiece(xcords - i, ycords) && isAChessPieceBlackOrWhite(xcords - i, ycords) == "white") { listOfDangerousMoves.Add((xcords - i, ycords)); break; }
+                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords) && doesTileHaveAChessPiece(xcords - i, ycords) && isAChessPieceBlackOrWhite(xcords - i, ycords) == "black") { break; }
+                else { break; }
+            }
+        }
+
+        private void blVerticalTopMovesDANGER(int xcords, int ycords)
+        {
+            for (int i = 1; i < 8; i++)
+            {
+                if (isInBoundsY(ycords + i) && !doesTileHaveAChessPiece(xcords, ycords + i)) { listOfDangerousMoves.Add((xcords, ycords + i)); }
+                else if (isInBoundsX(xcords) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords, ycords + i) && isAChessPieceBlackOrWhite(xcords, ycords + i) == "white") { listOfDangerousMoves.Add((xcords, ycords + i)); break; }
+                else if (isInBoundsX(xcords) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords, ycords + i) && isAChessPieceBlackOrWhite(xcords, ycords + i) == "black") { break; }
+                else { break; }
+            }
+        }
+
+        private void blVerticalBottomMovesDANGER(int xcords, int ycords)
+        {
+            for (int i = 1; i < 8; i++)
+            {
+                if (isInBoundsY(ycords - i) && !doesTileHaveAChessPiece(xcords, ycords - i)) { listOfDangerousMoves.Add((xcords, ycords - i)); }
+                else if (isInBoundsX(xcords) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords, ycords - i) && isAChessPieceBlackOrWhite(xcords, ycords - i) == "white") { listOfDangerousMoves.Add((xcords, ycords - i)); break; }
+                else if (isInBoundsX(xcords) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords, ycords - i) && isAChessPieceBlackOrWhite(xcords, ycords - i) == "black") { break; }
+                else { break; }
+            }
+        }
+
+        private void blKnightMovesDANGER(int xcords, int ycords)
+        {
+            if (isInBoundsX(xcords + 1) && isInBoundsY(ycords + 2) && !doesTileHaveAChessPiece(xcords + 1, ycords + 2)) { listOfDangerousMoves.Add((xcords + 1, ycords + 2)); }
+            if (isInBoundsX(xcords + 1) && isInBoundsY(ycords + 2) && doesTileHaveAChessPiece(xcords + 1, ycords + 2) && isAChessPieceBlackOrWhite(xcords + 1, ycords + 2) == "white") { listOfDangerousMoves.Add((xcords + 1, ycords + 2)); }
+
+            if (isInBoundsX(xcords + 2) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords + 2, ycords + 1)) { listOfDangerousMoves.Add((xcords + 2, ycords + 1)); }
+            if (isInBoundsX(xcords + 2) && isInBoundsY(ycords + 1) && doesTileHaveAChessPiece(xcords + 2, ycords + 1) && isAChessPieceBlackOrWhite(xcords + 2, ycords + 1) == "white") { listOfDangerousMoves.Add((xcords + 2, ycords + 1)); }
+
+            if (isInBoundsX(xcords + 2) && isInBoundsY(ycords - 1) && !doesTileHaveAChessPiece(xcords + 2, ycords - 1)) { listOfDangerousMoves.Add((xcords + 2, ycords - 1)); }
+            if (isInBoundsX(xcords + 2) && isInBoundsY(ycords - 1) && doesTileHaveAChessPiece(xcords + 2, ycords - 1) && isAChessPieceBlackOrWhite(xcords + 2, ycords - 1) == "white") { listOfDangerousMoves.Add((xcords + 2, ycords - 1)); }
+
+            if (isInBoundsX(xcords + 1) && isInBoundsY(ycords - 2) && !doesTileHaveAChessPiece(xcords + 1, ycords - 2)) { listOfDangerousMoves.Add((xcords + 1, ycords - 2)); }
+            if (isInBoundsX(xcords + 1) && isInBoundsY(ycords - 2) && doesTileHaveAChessPiece(xcords + 1, ycords - 2) && isAChessPieceBlackOrWhite(xcords + 1, ycords - 2) == "white") { listOfDangerousMoves.Add((xcords + 1, ycords - 2)); }
+
+
+            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords + 2) && !doesTileHaveAChessPiece(xcords - 1, ycords + 2)) { listOfDangerousMoves.Add((xcords - 1, ycords + 2)); }
+            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords + 2) && doesTileHaveAChessPiece(xcords - 1, ycords + 2) && isAChessPieceBlackOrWhite(xcords - 1, ycords + 2) == "white") { listOfDangerousMoves.Add((xcords - 1, ycords + 2)); }
+
+            if (isInBoundsX(xcords - 2) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords - 2, ycords + 1)) { listOfDangerousMoves.Add((xcords - 2, ycords + 1)); }
+            if (isInBoundsX(xcords - 2) && isInBoundsY(ycords + 1) && doesTileHaveAChessPiece(xcords - 2, ycords + 1) && isAChessPieceBlackOrWhite(xcords - 2, ycords + 1) == "white") { listOfDangerousMoves.Add((xcords - 2, ycords + 1)); }
+
+            if (isInBoundsX(xcords - 2) && isInBoundsY(ycords - 1) && !doesTileHaveAChessPiece(xcords - 2, ycords - 1)) { listOfDangerousMoves.Add((xcords - 2, ycords - 1)); }
+            if (isInBoundsX(xcords - 2) && isInBoundsY(ycords - 1) && doesTileHaveAChessPiece(xcords - 2, ycords - 1) && isAChessPieceBlackOrWhite(xcords - 2, ycords - 1) == "white") { listOfDangerousMoves.Add((xcords - 2, ycords - 1)); }
+
+            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords - 2) && !doesTileHaveAChessPiece(xcords - 1, ycords - 2)) { listOfDangerousMoves.Add((xcords - 1, ycords - 2)); }
+            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords - 2) && doesTileHaveAChessPiece(xcords - 1, ycords - 2) && isAChessPieceBlackOrWhite(xcords - 1, ycords - 2) == "white") { listOfDangerousMoves.Add((xcords - 1, ycords - 2)); }
+
+        }
 
 
 
 
-        
 
     }
 }
