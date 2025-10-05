@@ -20,8 +20,10 @@ namespace ChessGame
     public partial class MainWindow : Window
     {
         Tile[,] board = new Tile[8, 8];
+        Save[,] safeBoard = new Save[8, 8];
         List<(int,int)> listOfPlayableMoves = new List<(int,int)>();
         List<(int,int)> listOfDangerousMoves = new List<(int,int)>();
+        List<Action> listOfCommands = new List<Action>();
         String boardRow;
         selectTileState phase = selectTileState.select;
         turn playerTurn = turn.whitesTurn;
@@ -39,7 +41,11 @@ namespace ChessGame
             blacksTurn
         }
 
-
+        public class Save
+        {
+            public string value {  get; set; }
+            public Brush color {  get; set; }
+        }
         public class Tile
         {
             public string Name { get; set; }
@@ -52,11 +58,13 @@ namespace ChessGame
         {
             InitializeComponent();
             this.Loaded += MainWindow_Loaded;
-            this.KeyDown += new KeyEventHandler(DebugShow);
+            //this.KeyDown += new KeyEventHandler(DebugShow);
 
         }
 
-        private void DebugShow(object sender, KeyEventArgs e)
+
+
+        /*private void DebugShow(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter) {
                 foreach (var dangerousmoves in listOfDangerousMoves) {
@@ -65,13 +73,125 @@ namespace ChessGame
                 }
             }
 
-        }
+        }*/
 
         public void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             AssignNamesToBoardTiles();
             isKingChecked();
         }
+
+        private void saveTheBoard()
+        {
+            for (int i = 0; i <= 7; i++)
+            {
+                for (int j = 0; j <= 7; j++)
+                {
+                    ((TextBlock)chessboard.FindName(board[i, j].Name)).Text = safeBoard[i, j].value;
+                    ((TextBlock)chessboard.FindName(board[i, j].Name)).Foreground = safeBoard[i, j].color;
+                }
+            }
+
+        }
+
+        private void isTheGameOver()
+        {
+
+
+
+
+            for (int i = 0; i <= 7; i++)
+            {
+                for (int j = 0; j <= 7; j++)
+                {
+                    switch (((TextBlock)chessboard.FindName(board[i, j].Name)).Text)
+                    {
+                        case "♟️":
+                            switch (playerTurn)
+                            {
+                                case turn.whitesTurn:
+                                    
+                                    break;
+
+                                case turn.blacksTurn:
+                                    
+                                    break;
+                            }
+                            break;
+
+                        case "♘":
+                            switch (playerTurn)
+                            {
+                                case turn.whitesTurn:
+                                    whKnightMoves(i,j);
+                                    foreach(var possiblePlay in listOfPlayableMoves)
+                                    {
+                                        ((TextBlock)chessboard.FindName(board[possiblePlay.Item1, possiblePlay.Item2].Name)).Text = ((TextBlock)chessboard.FindName(board[i, j].Name)).Text;
+                                        isKingChecked();
+                                    }
+                                    break;
+                                case turn.blacksTurn:
+                                    
+                                    break;
+                            }
+                            break;
+
+                        case "♗":
+                            switch (playerTurn)
+                            {
+                                case turn.whitesTurn:
+                                    
+                                    break;
+                                case turn.blacksTurn:
+                                    if (isAChessPieceBlackOrWhite(i, j) == "white")
+                                    {
+                                     
+                                    }
+                                    break;
+                            }
+
+                            break;
+
+                        case "♖":
+                            switch (playerTurn)
+                            {
+                                case turn.whitesTurn:
+                                    if (isAChessPieceBlackOrWhite(i, j) == "black")
+                                    {
+                                        
+                                    }
+                                    break;
+                                case turn.blacksTurn:
+                                    if (isAChessPieceBlackOrWhite(i, j) == "white")
+                                    {
+                                        
+                                    }
+                                    break;
+                            }
+                            break;
+
+                        case "♕":
+                            switch (playerTurn)
+                            {
+                                case turn.whitesTurn:
+                                    if (isAChessPieceBlackOrWhite(i, j) == "black")
+                                    {
+                                        
+                                    }
+                                    break;
+                                case turn.blacksTurn:
+                                    if (isAChessPieceBlackOrWhite(i, j) == "white")
+                                    {
+                                        
+                                    }
+                                    break;
+                            }
+                            break;
+                    }
+                }
+            }
+        }
+
 
 
 
