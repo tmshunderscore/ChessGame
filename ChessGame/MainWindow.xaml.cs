@@ -27,6 +27,7 @@ namespace ChessGame
         String boardRow;
         selectTileState phase = selectTileState.select;
         turn playerTurn = turn.whitesTurn;
+        turn savedTurn;
         object currentSender;
         bool isKingInCheck = false;
         enum selectTileState
@@ -58,22 +59,19 @@ namespace ChessGame
         {
             InitializeComponent();
             this.Loaded += MainWindow_Loaded;
-            //this.KeyDown += new KeyEventHandler(DebugShow);
-
+            this.KeyDown += new KeyEventHandler(DebugShow);
+           
         }
 
 
 
-        /*private void DebugShow(object sender, KeyEventArgs e)
+        private void DebugShow(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter) {
-                foreach (var dangerousmoves in listOfDangerousMoves) {
-                    ((TextBlock)chessboard.FindName(board[dangerousmoves.Item1, dangerousmoves.Item2].Name)).Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#FFFF0000");
-                    System.Diagnostics.Debug.WriteLine(playerTurn);
+            if (e.Key == Key.NumPad1) {
+                loadTheBoard();
                 }
-            }
 
-        }*/
+        }
 
         public void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
@@ -87,18 +85,60 @@ namespace ChessGame
             {
                 for (int j = 0; j <= 7; j++)
                 {
-                    ((TextBlock)chessboard.FindName(board[i, j].Name)).Text = safeBoard[i, j].value;
-                    ((TextBlock)chessboard.FindName(board[i, j].Name)).Foreground = safeBoard[i, j].color;
+                    safeBoard[i,j] = new Save();
+                    safeBoard[i, j].value = ((TextBlock)chessboard.FindName(board[i, j].Name)).Text;
+                    safeBoard[i, j].color = ((TextBlock)chessboard.FindName(board[i, j].Name)).Foreground;
+                    savedTurn = playerTurn;
                 }
             }
-
         }
 
-        private void isTheGameOver()
+        
+
+        private void loadTheBoard()
         {
+            for (int i = 0; i <= 7; i++)
+            {
+                for (int j = 0; j <= 7; j++)
+                {
+                    ((TextBlock)chessboard.FindName(board[i, j].Name)).Text = safeBoard[i, j].value;
+                    ((TextBlock)chessboard.FindName(board[i, j].Name)).Foreground = safeBoard[i, j].color;
+                    playerTurn = savedTurn;
+                }
+            }
+        }
 
+        private bool CalculateMoves(Action specialcommand, int i, int j)
+        {
+            saveTheBoard();
+            listOfPlayableMoves.Clear();
+            specialcommand();
 
+                foreach(var pospla in listOfPlayableMoves)
+{
+System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
+}
+            saveTheBoard();
 
+            foreach (var possiblePlay in listOfPlayableMoves)
+            {
+                ((TextBlock)chessboard.FindName(board[possiblePlay.Item1, possiblePlay.Item2].Name)).Text = ((TextBlock)chessboard.FindName(board[i, j].Name)).Text;
+                ((TextBlock)chessboard.FindName(board[possiblePlay.Item1, possiblePlay.Item2].Name)).Foreground = ((TextBlock)chessboard.FindName(board[i, j].Name)).Foreground;
+                ((TextBlock)chessboard.FindName(board[i, j].Name)).Text = "";
+                if (!isKingChecked())
+                {
+                    System.Diagnostics.Debug.WriteLine($"from {board[i, j].Name} to {board[possiblePlay.Item1, possiblePlay.Item2].Name}");
+                    playerTurn = turn.whitesTurn;
+                    return true;
+                }
+                loadTheBoard();
+            }
+            return false;
+            System.Diagnostics.Debug.WriteLine("KING IS CHECKMATED");
+        }
+
+        private bool isTheGameOver()
+        {
 
             for (int i = 0; i <= 7; i++)
             {
@@ -123,11 +163,9 @@ namespace ChessGame
                             switch (playerTurn)
                             {
                                 case turn.whitesTurn:
-                                    whKnightMoves(i,j);
-                                    foreach(var possiblePlay in listOfPlayableMoves)
+                                    if (isAChessPieceBlackOrWhite(i, j) == "white")
                                     {
-                                        ((TextBlock)chessboard.FindName(board[possiblePlay.Item1, possiblePlay.Item2].Name)).Text = ((TextBlock)chessboard.FindName(board[i, j].Name)).Text;
-                                        isKingChecked();
+                                        if (CalculateMoves(() => whKnightMoves(i, j), i, j)) { return false; }
                                     }
                                     break;
                                 case turn.blacksTurn:
@@ -140,7 +178,9 @@ namespace ChessGame
                             switch (playerTurn)
                             {
                                 case turn.whitesTurn:
-                                    
+                                    if(isAChessPieceBlackOrWhite(i, j) == "white") {
+                                        if (CalculateMoves(() => whBishopMoves(i, j), i, j)) { return false; }
+                                    }
                                     break;
                                 case turn.blacksTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "white")
@@ -174,10 +214,11 @@ namespace ChessGame
                             switch (playerTurn)
                             {
                                 case turn.whitesTurn:
-                                    if (isAChessPieceBlackOrWhite(i, j) == "black")
-                                    {
-                                        
-                                    }
+                                    
+                                        if (isAChessPieceBlackOrWhite(i, j) == "white")
+                                        {
+                                            if (CalculateMoves(() => whQueenMoves(i, j), i, j)) { return false; }
+                                        }
                                     break;
                                 case turn.blacksTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "white")
@@ -190,6 +231,7 @@ namespace ChessGame
                     }
                 }
             }
+            return true;
         }
 
 
@@ -230,8 +272,15 @@ namespace ChessGame
                     MoveChessPiece(sender, listOfPlayableMoves, currentSender);
 
 
-
                     phase = selectTileState.select;
+                    if (isKingChecked() && !doesKingHaveMoves(findKingPos().Item1, findKingPos().Item2))
+                    {
+                        if (isTheGameOver())
+                        {
+                            System.Diagnostics.Debug.WriteLine("You lost");
+                            System.Windows.Application.Current.Shutdown();
+                        }
+                    }
                     break;
 
             }
@@ -252,7 +301,8 @@ namespace ChessGame
                     ((TextBlock)sender).Foreground = ((TextBlock)previousSender).Foreground;
                     ((TextBlock)previousSender).Text = "";
                     switchTurns();
-                    isKingChecked();
+                    //isKingChecked();
+                    
                 }
             }
             if(((TextBlock)sender).Text == "♟️")
@@ -604,10 +654,7 @@ namespace ChessGame
                     switch (playerTurn)
                     {
                         case turn.whitesTurn:
-                            whDiagonalTopLeftMoves(xcords, ycords);
-                            whDiagonalTopRightMoves(xcords, ycords);
-                            whDiagonalBottomLeftMoves(xcords, ycords);
-                            whDiagonalBottomRightMoves(xcords, ycords);
+                            whBishopMoves(xcords, ycords);
                         break;
 
                         case turn.blacksTurn:
@@ -645,14 +692,7 @@ namespace ChessGame
                     switch (playerTurn)
                     {
                         case turn.whitesTurn:
-                            whDiagonalTopLeftMoves(xcords, ycords);
-                            whDiagonalTopRightMoves(xcords, ycords);
-                            whDiagonalBottomLeftMoves(xcords, ycords);
-                            whDiagonalBottomRightMoves(xcords, ycords);
-                            whVerticalBottomMoves(xcords, ycords);
-                            whVerticalTopMoves(xcords, ycords);
-                            whHorizontalLeftMoves(xcords, ycords);
-                            whHorizontalRightMoves(xcords, ycords);
+                            whQueenMoves(xcords, ycords);
                         break;
 
                         case turn.blacksTurn:
@@ -876,23 +916,52 @@ namespace ChessGame
             return null;
         }
 
-        private void isKingChecked()
+        private (int,int) findKingPos()
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    if (((TextBlock)chessboard.FindName(board[i, j].Name)).Text == "♔")
+                    {
+                        return (i, j);
+                    }
+                }
+            }
+            return (-1,-1);
+        }
+
+        private bool doesKingHaveMoves(int xcords, int ycords)
+        {
+            listOfPlayableMoves.Clear();
+            if (isInBoundsX(xcords) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords, ycords + 1) && isTileSafe(board[xcords, ycords + 1].Name)) { listOfPlayableMoves.Add((xcords, ycords + 1)); }
+            if (isInBoundsX(xcords + 1) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords + 1, ycords + 1) && isTileSafe(board[xcords + 1, ycords + 1].Name)) { listOfPlayableMoves.Add((xcords + 1, ycords + 1)); }
+            if (isInBoundsX(xcords + 1) && isInBoundsY(ycords) && !doesTileHaveAChessPiece(xcords + 1, ycords) && isTileSafe(board[xcords + 1, ycords].Name)) { listOfPlayableMoves.Add((xcords + 1, ycords)); }
+            if (isInBoundsX(xcords + 1) && isInBoundsY(ycords - 1) && !doesTileHaveAChessPiece(xcords + 1, ycords - 1) && isTileSafe(board[xcords + 1, ycords - 1].Name)) { listOfPlayableMoves.Add((xcords + 1, ycords - 1)); }
+            if (isInBoundsX(xcords) && isInBoundsY(ycords - 1) && !doesTileHaveAChessPiece(xcords, ycords - 1) && isTileSafe(board[xcords, ycords - 1].Name)) { listOfPlayableMoves.Add((xcords, ycords - 1)); }
+            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords - 1) && !doesTileHaveAChessPiece(xcords - 1, ycords - 1) && isTileSafe(board[xcords - 1, ycords - 1].Name)) { listOfPlayableMoves.Add((xcords - 1, ycords - 1)); }
+            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords) && !doesTileHaveAChessPiece(xcords - 1, ycords) && isTileSafe(board[xcords - 1, ycords].Name)) { listOfPlayableMoves.Add((xcords - 1, ycords)); }
+            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords - 1, ycords + 1) && isTileSafe(board[xcords - 1, ycords + 1].Name)) { listOfPlayableMoves.Add((xcords - 1, ycords + 1)); }
+            if (!listOfPlayableMoves.Any()) { return false; }
+            return true;
+        }
+
+
+        private bool isKingChecked()
         {
             findAllDangerousTiles();
 
             foreach (var danger in listOfDangerousMoves)
             {
+                    isKingInCheck = false;
                 if (board[danger.Item1,danger.Item2].Name == findKing())
                 {
                     isKingInCheck = true;
-                    break;
+                    return isKingInCheck;
                 }
-                else
-                {
-                    isKingInCheck = false;
-                }
+                
             }
-            
+            return isKingInCheck;
 
         }
 
@@ -1231,7 +1300,25 @@ namespace ChessGame
 
         }
 
+        private void whBishopMoves(int xcords, int ycords)
+        {
+            whDiagonalTopLeftMoves(xcords, ycords);
+            whDiagonalTopRightMoves(xcords, ycords);
+            whDiagonalBottomLeftMoves(xcords, ycords);
+            whDiagonalBottomRightMoves(xcords, ycords);
+        }
 
+        private void whQueenMoves(int xcords, int ycords)
+        {
+            whDiagonalTopLeftMoves(xcords, ycords);
+            whDiagonalTopRightMoves(xcords, ycords);
+            whDiagonalBottomLeftMoves(xcords, ycords);
+            whDiagonalBottomRightMoves(xcords, ycords);
+            whVerticalBottomMoves(xcords, ycords);
+            whVerticalTopMoves(xcords, ycords);
+            whHorizontalLeftMoves(xcords, ycords);
+            whHorizontalRightMoves(xcords, ycords);
+        }
 
 
 
