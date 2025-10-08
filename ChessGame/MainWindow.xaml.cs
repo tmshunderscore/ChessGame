@@ -30,6 +30,7 @@ namespace ChessGame
         turn savedTurn;
         object currentSender;
         bool isKingInCheck = false;
+        string PlayersKingColor;
         enum selectTileState
         {
             select,
@@ -150,7 +151,10 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
                             switch (playerTurn)
                             {
                                 case turn.whitesTurn:
-                                    
+                                    if (isAChessPieceBlackOrWhite(i, j) == "white")
+                                    {
+                                        if (CalculateMoves(() => whPawnMoves(i, j), i, j)) { return false; }
+                                    }
                                     break;
 
                                 case turn.blacksTurn:
@@ -196,9 +200,9 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
                             switch (playerTurn)
                             {
                                 case turn.whitesTurn:
-                                    if (isAChessPieceBlackOrWhite(i, j) == "black")
+                                    if (isAChessPieceBlackOrWhite(i, j) == "white")
                                     {
-                                        
+                                        if (CalculateMoves(() => whRookMoves(i, j), i, j)) { return false; }
                                     }
                                     break;
                                 case turn.blacksTurn:
@@ -575,7 +579,7 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
 
         }
 
-        private List<(int,int)> whPawnMoves(object sender,int xcords, int ycords)
+        private List<(int,int)> whPawnMoveswSender(object sender,int xcords, int ycords)
 
         {
             // diagonal right chess piece take 
@@ -625,7 +629,7 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
                     switch (playerTurn)
                     {
                         case turn.whitesTurn:
-                            return whPawnMoves(sender,xcords,ycords);
+                            return whPawnMoveswSender(sender,xcords,ycords);
                             break;
 
                         case turn.blacksTurn:
@@ -672,10 +676,7 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
                     switch (playerTurn)
                     {
                         case turn.whitesTurn:
-                            whVerticalBottomMoves(xcords, ycords);
-                            whVerticalTopMoves(xcords, ycords);
-                            whHorizontalLeftMoves(xcords, ycords);
-                            whHorizontalRightMoves(xcords, ycords);
+                            whRookMoves(xcords, ycords);
                         break;
 
                         case turn.blacksTurn:
@@ -714,6 +715,7 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
                     switch (playerTurn)
                     {
                         case turn.whitesTurn:
+                            
                             if (isInBoundsX(xcords) && isInBoundsY(ycords+1) && !doesTileHaveAChessPiece(xcords, ycords+1) && isTileSafe(board[xcords,ycords+1].Name)){ listOfPlayableMoves.Add((xcords, ycords + 1)); }
                             if (isInBoundsX(xcords+1) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords+1, ycords + 1) && isTileSafe(board[xcords+1, ycords + 1].Name)) { listOfPlayableMoves.Add((xcords+1, ycords + 1)); }
                             if (isInBoundsX(xcords+1) && isInBoundsY(ycords) && !doesTileHaveAChessPiece(xcords+1, ycords) && isTileSafe(board[xcords+1, ycords].Name)) { listOfPlayableMoves.Add((xcords+1, ycords)); }
@@ -722,7 +724,7 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
                             if (isInBoundsX(xcords-1) && isInBoundsY(ycords - 1) && !doesTileHaveAChessPiece(xcords-1, ycords - 1) && isTileSafe(board[xcords-1, ycords - 1].Name)) { listOfPlayableMoves.Add((xcords-1, ycords - 1)); }
                             if (isInBoundsX(xcords-1) && isInBoundsY(ycords) && !doesTileHaveAChessPiece(xcords-1, ycords) && isTileSafe(board[xcords-1, ycords].Name)) { listOfPlayableMoves.Add((xcords-1, ycords)); }
                             if (isInBoundsX(xcords-1) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords-1, ycords + 1) && isTileSafe(board[xcords-1, ycords + 1].Name)) { listOfPlayableMoves.Add((xcords-1, ycords + 1)); }
-
+                            
                             break;
                         case turn.blacksTurn:
                             if (isInBoundsX(xcords) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords, ycords + 1) && isTileSafe(board[xcords, ycords + 1].Name)) { listOfPlayableMoves.Add((xcords, ycords + 1)); }
@@ -769,6 +771,8 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
         private void findAllDangerousTiles()
         {
             listOfDangerousMoves.Clear();
+            var temp = findKingPos();
+            ((TextBlock)chessboard.FindName(board[temp.Item1, temp.Item2].Name)).Text = "";
             for (int i = 0; i <= 7; i++)
             {
                 for (int j = 0; j <= 7; j++)
@@ -899,15 +903,26 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
                     }
                 }
             }
+            ((TextBlock)chessboard.FindName(board[temp.Item1, temp.Item2].Name)).Text = "♔";
         }
 
         private string findKing()
         {
+            string color = null;
+            switch(playerTurn){
+                case turn.whitesTurn:
+                    color = "white";
+                break;
+                case turn.blacksTurn:
+                    color = "black";
+                    break;
+            }
+
             for(int i = 0; i<8; i++)
             {
                 for (int j = 0; j < 8; j++)
                 {
-                    if (((TextBlock)chessboard.FindName(board[i, j].Name)).Text == "♔")
+                    if (((TextBlock)chessboard.FindName(board[i, j].Name)).Text == "♔" && isAChessPieceBlackOrWhite(i,j) == color)
                     {
                         return board[i, j].Name;
                     }
@@ -918,11 +933,21 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
 
         private (int,int) findKingPos()
         {
+            string color = null;
+            switch (playerTurn)
+            {
+                case turn.whitesTurn:
+                    color = "white";
+                    break;
+                case turn.blacksTurn:
+                    color = "black";
+                    break;
+            }
             for (int i = 0; i < 8; i++)
             {
                 for (int j = 0; j < 8; j++)
                 {
-                    if (((TextBlock)chessboard.FindName(board[i, j].Name)).Text == "♔")
+                    if (((TextBlock)chessboard.FindName(board[i, j].Name)).Text == "♔" && isAChessPieceBlackOrWhite(i, j) == color)
                     {
                         return (i, j);
                     }
@@ -934,7 +959,7 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
         private bool doesKingHaveMoves(int xcords, int ycords)
         {
             listOfPlayableMoves.Clear();
-            if (isInBoundsX(xcords) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords, ycords + 1) && isTileSafe(board[xcords, ycords + 1].Name)) { listOfPlayableMoves.Add((xcords, ycords + 1)); }
+            if (isInBoundsX(xcords) && isInBoundsY(ycords + 1) && (!doesTileHaveAChessPiece(xcords, ycords + 1) && isTileSafe(board[xcords, ycords + 1].Name))) { listOfPlayableMoves.Add((xcords, ycords + 1)); }
             if (isInBoundsX(xcords + 1) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords + 1, ycords + 1) && isTileSafe(board[xcords + 1, ycords + 1].Name)) { listOfPlayableMoves.Add((xcords + 1, ycords + 1)); }
             if (isInBoundsX(xcords + 1) && isInBoundsY(ycords) && !doesTileHaveAChessPiece(xcords + 1, ycords) && isTileSafe(board[xcords + 1, ycords].Name)) { listOfPlayableMoves.Add((xcords + 1, ycords)); }
             if (isInBoundsX(xcords + 1) && isInBoundsY(ycords - 1) && !doesTileHaveAChessPiece(xcords + 1, ycords - 1) && isTileSafe(board[xcords + 1, ycords - 1].Name)) { listOfPlayableMoves.Add((xcords + 1, ycords - 1)); }
@@ -1318,6 +1343,30 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
             whVerticalTopMoves(xcords, ycords);
             whHorizontalLeftMoves(xcords, ycords);
             whHorizontalRightMoves(xcords, ycords);
+        }
+
+        private void whRookMoves(int xcords, int ycords)
+        {
+            whVerticalBottomMoves(xcords, ycords);
+            whVerticalTopMoves(xcords, ycords);
+            whHorizontalLeftMoves(xcords, ycords);
+            whHorizontalRightMoves(xcords, ycords);
+        }
+
+        private void whPawnMoves(int xcords, int ycords)
+        {
+            // diagonal right chess piece take 
+            if (isInBoundsX(xcords + 1) && doesTileHaveAChessPiece(xcords + 1, ycords + 1) && isAChessPieceBlackOrWhite(xcords + 1, ycords + 1) == "black") { listOfPlayableMoves.Add((xcords + 1, ycords + 1)); }
+
+            // diagonal left chess piece take 
+            if (isInBoundsX(xcords - 1) && doesTileHaveAChessPiece(xcords - 1, ycords + 1) && isAChessPieceBlackOrWhite(xcords - 1, ycords + 1) == "black") { listOfPlayableMoves.Add((xcords - 1, ycords + 1)); }
+
+            // move up 1 tile 
+            if (doesTileHaveAChessPiece(xcords, ycords + 1)) { return; }
+            listOfPlayableMoves.Add((xcords, ycords + 1));
+
+            // move up 2 tiles 
+            if (doesTileHaveAChessPiece(xcords, ycords + 2)) { return; }
         }
 
 
