@@ -20,9 +20,9 @@
                 <TextBlock MouseDown="selectTile" Name="c8" Width="100" Height="100" Background="#b09278" Foreground="Black" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♗</TextBlock>
                 <TextBlock MouseDown="selectTile" Name="d8" Width="100" Height="100" Background="#57391f" Foreground="Black" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center"></TextBlock>
                 <TextBlock MouseDown="selectTile"  Name="e8" Width="100" Height="100" Background="#b09278" Foreground="Black" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♔</TextBlock>
-                <TextBlock MouseDown="selectTile" Name="f8" Width="100" Height="100" Background="#57391f" Foreground="Black" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♗</TextBlock>
-                <TextBlock MouseDown="selectTile" Name="g8" Width="100" Height="100" Background="#b09278" Foreground="Black" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♘</TextBlock>
-                <TextBlock MouseDown="selectTile" Name="h8" Width="100" Height="100" Background="#57391f" Foreground="Black" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center">♖</TextBlock>
+                <TextBlock MouseDown="selectTile" Name="f8" Width="100" Height="100" Background="#57391f" Foreground="Black" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center"></TextBlock>
+                <TextBlock MouseDown="selectTile" Name="g8" Width="100" Height="100" Background="#b09278" Foreground="Black" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center"></TextBlock>
+                <TextBlock MouseDown="selectTile" Name="h8" Width="100" Height="100" Background="#57391f" Foreground="Black" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center"></TextBlock>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0">
@@ -64,7 +64,7 @@
                 <TextBlock MouseDown="selectTile" Name="c4" Width="100" Height="100" Background="#b09278" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center"></TextBlock>
                 <TextBlock MouseDown="selectTile" Name="d4" Width="100" Height="100" Background="#57391f" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center"></TextBlock>
                 <TextBlock MouseDown="selectTile" Name="e4" Width="100" Height="100" Background="#b09278" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center"></TextBlock>
-                <TextBlock MouseDown="selectTile" Name="f4" Width="100" Height="100" Background="#57391f" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center"></TextBlock>
+                <TextBlock MouseDown="selectTile" Name="f4" Width="100" Height="100" Background="#57391f" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center" Foreground="White">♖</TextBlock>
                 <TextBlock MouseDown="selectTile" Name="g4" Width="100" Height="100" Background="#b09278" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center"></TextBlock>
                 <TextBlock MouseDown="selectTile" Name="h4" Width="100" Height="100" Background="#57391f" FontWeight="UltraBlack"  FontSize="64" Padding="5" TextAlignment="Center"></TextBlock>
             </StackPanel>
