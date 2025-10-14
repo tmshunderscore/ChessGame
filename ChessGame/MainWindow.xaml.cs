@@ -65,6 +65,18 @@ namespace ChessGame
            
         }
 
+        private void CheckIfMoveIsLegal(Action addMove,int srcxcords, int srcycords, int destxcords, int destycords)
+        {
+            // check if move puts king in check => move illegal
+            saveTheBoard();
+            ((TextBlock)chessboard.FindName(board[destxcords, destycords].Name)).Text = ((TextBlock)chessboard.FindName(board[srcxcords, srcycords].Name)).Text;
+            ((TextBlock)chessboard.FindName(board[destxcords, destycords].Name)).Foreground = ((TextBlock)chessboard.FindName(board[srcxcords, srcycords].Name)).Foreground;
+            if (!isKingChecked()) { addMove(); loadTheBoard(); return; }
+                loadTheBoard();
+                return;
+            
+            
+        }
 
 
         private void DebugShow(object sender, KeyEventArgs e)
@@ -329,7 +341,7 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
                     
                 }
             }
-            if(((TextBlock)sender).Text == "♟️")
+            if(((TextBlock)sender).Text == "♟️" && board[FindPosition(previousSender, board).Item1, FindPosition(previousSender, board).Item2].Name != board[FindPosition(sender, board).Item1, FindPosition(sender, board).Item2].Name)
             {
                 board[FindPosition(previousSender, board).Item1, FindPosition(previousSender, board).Item2].didTheFirstMove = false;
                 board[FindPosition(sender, board).Item1, FindPosition(sender, board).Item2].didTheFirstMove = true;
@@ -353,6 +365,7 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
 
         private bool doesTileHaveAChessPiece(int xcords, int ycords)
         {
+            if (!isInBoundsY(ycords+1)) {  return false; }
             if (((TextBlock)chessboard.FindName(board[xcords, ycords].Name)).Text != "") { return true; }
             return false;
         }
@@ -373,8 +386,8 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
         private void whDiagonalTopLeftMoves(int xcords, int ycords) {
             for (int i = 1; i < 8; i++)
             {
-                if (isInBoundsX(xcords - i) && isInBoundsY(ycords + i) && !doesTileHaveAChessPiece(xcords - i, ycords + i)) { listOfPlayableMoves.Add((xcords - i, ycords + i)); }
-                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords - i, ycords + i) && isAChessPieceBlackOrWhite(xcords - i, ycords + i) == "black") { listOfPlayableMoves.Add((xcords - i, ycords + i)); break; }
+                if (isInBoundsX(xcords - i) && isInBoundsY(ycords + i) && !doesTileHaveAChessPiece(xcords - i, ycords + i)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords - i, ycords + i)), xcords, ycords, xcords - i, ycords + i); }
+                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords - i, ycords + i) && isAChessPieceBlackOrWhite(xcords - i, ycords + i) == "black") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords - i, ycords + i)), xcords, ycords, xcords - i, ycords + i); break; }
                 else if (isInBoundsX(xcords - i) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords - i, ycords + i) && isAChessPieceBlackOrWhite(xcords - i, ycords + i) == "white") { break; }
                 else {  break; }
             }
@@ -383,8 +396,8 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
         {
             for (int i = 1; i < 8; i++)
             {
-                if (isInBoundsX(xcords + i) && isInBoundsY(ycords + i) && !doesTileHaveAChessPiece(xcords + i, ycords + i)) { listOfPlayableMoves.Add((xcords + i, ycords + i)); }
-                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords + i, ycords + i) && isAChessPieceBlackOrWhite(xcords + i, ycords + i) == "black") { listOfPlayableMoves.Add((xcords + i, ycords + i)); break; }
+                if (isInBoundsX(xcords + i) && isInBoundsY(ycords + i) && !doesTileHaveAChessPiece(xcords + i, ycords + i)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords + i, ycords + i)), xcords, ycords, xcords + i, ycords + i); }
+                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords + i, ycords + i) && isAChessPieceBlackOrWhite(xcords + i, ycords + i) == "black") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords + i, ycords + i)), xcords, ycords, xcords + i, ycords + i); break; }
                 else if (isInBoundsX(xcords + i) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords + i, ycords + i) && isAChessPieceBlackOrWhite(xcords + i, ycords + i) == "white") { break; }
                 else { break; }
             }
@@ -394,8 +407,8 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
         {
             for (int i = 1; i < 8; i++)
             {
-                if (isInBoundsX(xcords - i) && isInBoundsY(ycords - i) && !doesTileHaveAChessPiece(xcords - i, ycords - i)) { listOfPlayableMoves.Add((xcords - i, ycords - i)); }
-                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords - i, ycords - i) && isAChessPieceBlackOrWhite(xcords - i, ycords - i) == "black") { listOfPlayableMoves.Add((xcords - i, ycords - i)); break; }
+                if (isInBoundsX(xcords - i) && isInBoundsY(ycords - i) && !doesTileHaveAChessPiece(xcords - i, ycords - i)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords - i, ycords - i)), xcords, ycords, xcords - i, ycords - i); }
+                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords - i, ycords - i) && isAChessPieceBlackOrWhite(xcords - i, ycords - i) == "black") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords - i, ycords - i)), xcords, ycords, xcords - i, ycords - i); break; }
                 else if (isInBoundsX(xcords - i) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords - i, ycords - i) && isAChessPieceBlackOrWhite(xcords - i, ycords - i) == "white") { break; }
                 else { break; }
             }
@@ -404,8 +417,8 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
         {
             for (int i = 1; i < 8; i++)
             {
-                if (isInBoundsX(xcords + i) && isInBoundsY(ycords - i) && !doesTileHaveAChessPiece(xcords + i, ycords - i)) { listOfPlayableMoves.Add((xcords + i, ycords - i)); }
-                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords + i, ycords - i) && isAChessPieceBlackOrWhite(xcords + i, ycords - i) == "black") { listOfPlayableMoves.Add((xcords + i, ycords - i)); break; }
+                if (isInBoundsX(xcords + i) && isInBoundsY(ycords - i) && !doesTileHaveAChessPiece(xcords + i, ycords - i)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords + i, ycords - i)), xcords, ycords, xcords + i, ycords - i); }
+                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords + i, ycords - i) && isAChessPieceBlackOrWhite(xcords + i, ycords - i) == "black") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords + i, ycords - i)), xcords, ycords, xcords + i, ycords - i); break; }
                 else if (isInBoundsX(xcords + i) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords + i, ycords - i) && isAChessPieceBlackOrWhite(xcords + i, ycords - i) == "white") { break; }
                 else { break; }
             }
@@ -415,8 +428,8 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
         {
             for (int i = 1; i < 8; i++)
             {
-                if (isInBoundsX(xcords + i) && !doesTileHaveAChessPiece(xcords + i, ycords)) { listOfPlayableMoves.Add((xcords + i, ycords)); }
-                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords) && doesTileHaveAChessPiece(xcords + i, ycords) && isAChessPieceBlackOrWhite(xcords + i, ycords) == "black") { listOfPlayableMoves.Add((xcords + i, ycords)); break; }
+                if (isInBoundsX(xcords + i) && !doesTileHaveAChessPiece(xcords + i, ycords)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords + i, ycords)), xcords, ycords, xcords + i, ycords); }
+                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords) && doesTileHaveAChessPiece(xcords + i, ycords) && isAChessPieceBlackOrWhite(xcords + i, ycords) == "black") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords + i, ycords)), xcords, ycords, xcords + i, ycords); break; }
                 else if (isInBoundsX(xcords + i) && isInBoundsY(ycords) && doesTileHaveAChessPiece(xcords + i, ycords) && isAChessPieceBlackOrWhite(xcords + i, ycords) == "white") { break; }
                 else { break; }
             }
@@ -426,8 +439,8 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
         {
             for (int i = 1; i < 8; i++)
             {
-                if (isInBoundsX(xcords - i) && !doesTileHaveAChessPiece(xcords - i, ycords)) { listOfPlayableMoves.Add((xcords - i, ycords)); }
-                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords) && doesTileHaveAChessPiece(xcords - i, ycords) && isAChessPieceBlackOrWhite(xcords - i, ycords) == "black") { listOfPlayableMoves.Add((xcords - i, ycords)); break; }
+                if (isInBoundsX(xcords - i) && !doesTileHaveAChessPiece(xcords - i, ycords)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords - i, ycords)), xcords, ycords, xcords - i, ycords); }
+                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords) && doesTileHaveAChessPiece(xcords - i, ycords) && isAChessPieceBlackOrWhite(xcords - i, ycords) == "black") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords - i, ycords)),xcords,ycords,xcords - i, ycords); break; }
                 else if (isInBoundsX(xcords - i) && isInBoundsY(ycords) && doesTileHaveAChessPiece(xcords - i, ycords) && isAChessPieceBlackOrWhite(xcords - i, ycords) == "white") { break; }
                 else { break; }
             }
@@ -437,8 +450,8 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
         {
             for (int i = 1; i < 8; i++)
             {
-                if (isInBoundsY(ycords + i) && !doesTileHaveAChessPiece(xcords, ycords + i)) { listOfPlayableMoves.Add((xcords, ycords + i)); }
-                else if (isInBoundsX(xcords) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords, ycords + i) && isAChessPieceBlackOrWhite(xcords, ycords + i) == "black") { listOfPlayableMoves.Add((xcords, ycords + i)); break; }
+                if (isInBoundsY(ycords + i) && !doesTileHaveAChessPiece(xcords, ycords + i)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords, ycords + i)), xcords, ycords, xcords, ycords + i); }
+                else if (isInBoundsX(xcords) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords, ycords + i) && isAChessPieceBlackOrWhite(xcords, ycords + i) == "black") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords, ycords + i)), xcords, ycords, xcords, ycords + i); break; }
                 else if (isInBoundsX(xcords) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords, ycords + i) && isAChessPieceBlackOrWhite(xcords, ycords + i) == "white") { break; }
                 else { break; }
             }
@@ -448,8 +461,8 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
         {
             for (int i = 1; i < 8; i++)
             {
-                if (isInBoundsY(ycords - i) && !doesTileHaveAChessPiece(xcords, ycords - i)) { listOfPlayableMoves.Add((xcords, ycords - i)); }
-                else if (isInBoundsX(xcords) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords, ycords - i) && isAChessPieceBlackOrWhite(xcords, ycords - i) == "black") { listOfPlayableMoves.Add((xcords, ycords - i)); break; }
+                if (isInBoundsY(ycords - i) && !doesTileHaveAChessPiece(xcords, ycords - i)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords, ycords - i)), xcords, ycords, xcords, ycords - i); }
+                else if (isInBoundsX(xcords) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords, ycords - i) && isAChessPieceBlackOrWhite(xcords, ycords - i) == "black") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords, ycords - i)), xcords, ycords, xcords, ycords - i); break; }
                 else if (isInBoundsX(xcords) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords, ycords - i) && isAChessPieceBlackOrWhite(xcords, ycords - i) == "white") { break; }
                 else { break; }
             }
@@ -457,30 +470,30 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
 
         private void whKnightMoves(int xcords, int ycords)
         {
-                if (isInBoundsX(xcords + 1) && isInBoundsY(ycords + 2) && !doesTileHaveAChessPiece(xcords + 1, ycords + 2)) { listOfPlayableMoves.Add((xcords + 1, ycords + 2)); }
-                if (isInBoundsX(xcords + 1) && isInBoundsY(ycords + 2) && doesTileHaveAChessPiece(xcords + 1, ycords + 2) && isAChessPieceBlackOrWhite(xcords + 1, ycords + 2) == "black") { listOfPlayableMoves.Add((xcords + 1, ycords + 2)); }
+                if (isInBoundsX(xcords + 1) && isInBoundsY(ycords + 2) && !doesTileHaveAChessPiece(xcords + 1, ycords + 2)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords + 1, ycords + 2)), xcords, ycords, xcords + 1, ycords + 2); }
+                if (isInBoundsX(xcords + 1) && isInBoundsY(ycords + 2) && doesTileHaveAChessPiece(xcords + 1, ycords + 2) && isAChessPieceBlackOrWhite(xcords + 1, ycords + 2) == "black") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords + 1, ycords + 2)), xcords, ycords, xcords + 1, ycords + 2); }
 
-                if (isInBoundsX(xcords + 2) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords + 2, ycords + 1)) { listOfPlayableMoves.Add((xcords + 2, ycords + 1)); }
-                if (isInBoundsX(xcords + 2) && isInBoundsY(ycords + 1) && doesTileHaveAChessPiece(xcords + 2, ycords + 1) && isAChessPieceBlackOrWhite(xcords + 2, ycords + 1) == "black") { listOfPlayableMoves.Add((xcords + 2, ycords + 1)); }
+                if (isInBoundsX(xcords + 2) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords + 2, ycords + 1)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords + 2, ycords + 1)), xcords, ycords, xcords + 2, ycords + 1); }
+                if (isInBoundsX(xcords + 2) && isInBoundsY(ycords + 1) && doesTileHaveAChessPiece(xcords + 2, ycords + 1) && isAChessPieceBlackOrWhite(xcords + 2, ycords + 1) == "black") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords + 2, ycords + 1)), xcords, ycords, xcords + 2, ycords + 1); }
 
-                if (isInBoundsX(xcords + 2) && isInBoundsY(ycords - 1) && !doesTileHaveAChessPiece(xcords + 2, ycords - 1)) { listOfPlayableMoves.Add((xcords + 2, ycords - 1)); }
-                if (isInBoundsX(xcords + 2) && isInBoundsY(ycords - 1) && doesTileHaveAChessPiece(xcords + 2, ycords - 1) && isAChessPieceBlackOrWhite(xcords + 2, ycords - 1) == "black") { listOfPlayableMoves.Add((xcords + 2, ycords - 1)); }
+                if (isInBoundsX(xcords + 2) && isInBoundsY(ycords - 1) && !doesTileHaveAChessPiece(xcords + 2, ycords - 1)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords + 2, ycords - 1)), xcords, ycords, xcords + 2, ycords - 1); }
+                if (isInBoundsX(xcords + 2) && isInBoundsY(ycords - 1) && doesTileHaveAChessPiece(xcords + 2, ycords - 1) && isAChessPieceBlackOrWhite(xcords + 2, ycords - 1) == "black") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords + 2, ycords - 1)), xcords, ycords, xcords + 2, ycords - 1); }
 
-                if (isInBoundsX(xcords + 1) && isInBoundsY(ycords -2) && !doesTileHaveAChessPiece(xcords + 1, ycords -2)) { listOfPlayableMoves.Add((xcords + 1, ycords -2)); }
-                if (isInBoundsX(xcords + 1) && isInBoundsY(ycords -2) && doesTileHaveAChessPiece(xcords + 1, ycords -2) && isAChessPieceBlackOrWhite(xcords + 1, ycords -2) == "black") { listOfPlayableMoves.Add((xcords + 1, ycords - 2)); }
+                if (isInBoundsX(xcords + 1) && isInBoundsY(ycords -2) && !doesTileHaveAChessPiece(xcords + 1, ycords -2)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords + 1, ycords - 2)), xcords, ycords, xcords + 1, ycords - 2); }
+                if (isInBoundsX(xcords + 1) && isInBoundsY(ycords -2) && doesTileHaveAChessPiece(xcords + 1, ycords -2) && isAChessPieceBlackOrWhite(xcords + 1, ycords -2) == "black") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords + 1, ycords - 2)),xcords,ycords,xcords + 1, ycords - 2); }
 
 
-            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords + 2) && !doesTileHaveAChessPiece(xcords - 1, ycords + 2)) { listOfPlayableMoves.Add((xcords - 1, ycords + 2)); }
-            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords + 2) && doesTileHaveAChessPiece(xcords - 1, ycords + 2) && isAChessPieceBlackOrWhite(xcords - 1, ycords + 2) == "black") { listOfPlayableMoves.Add((xcords - 1, ycords + 2)); }
+            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords + 2) && !doesTileHaveAChessPiece(xcords - 1, ycords + 2)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords - 1, ycords + 2)), xcords, ycords, xcords - 1, ycords + 2); }
+            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords + 2) && doesTileHaveAChessPiece(xcords - 1, ycords + 2) && isAChessPieceBlackOrWhite(xcords - 1, ycords + 2) == "black") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords - 1, ycords + 2)), xcords, ycords, xcords - 1, ycords + 2); }
 
-            if (isInBoundsX(xcords - 2) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords - 2, ycords + 1)) { listOfPlayableMoves.Add((xcords - 2, ycords + 1)); }
-            if (isInBoundsX(xcords - 2) && isInBoundsY(ycords + 1) && doesTileHaveAChessPiece(xcords - 2, ycords + 1) && isAChessPieceBlackOrWhite(xcords - 2, ycords + 1) == "black") { listOfPlayableMoves.Add((xcords - 2, ycords + 1)); }
+            if (isInBoundsX(xcords - 2) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords - 2, ycords + 1)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords - 2, ycords + 1)), xcords, ycords, xcords - 2, ycords + 1); }
+            if (isInBoundsX(xcords - 2) && isInBoundsY(ycords + 1) && doesTileHaveAChessPiece(xcords - 2, ycords + 1) && isAChessPieceBlackOrWhite(xcords - 2, ycords + 1) == "black") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords - 2, ycords + 1)),xcords,ycords,xcords - 2, ycords + 1); }
 
-            if (isInBoundsX(xcords - 2) && isInBoundsY(ycords - 1) && !doesTileHaveAChessPiece(xcords - 2, ycords - 1)) { listOfPlayableMoves.Add((xcords - 2, ycords - 1)); }
-            if (isInBoundsX(xcords - 2) && isInBoundsY(ycords - 1) && doesTileHaveAChessPiece(xcords - 2, ycords - 1) && isAChessPieceBlackOrWhite(xcords - 2, ycords - 1) == "black") { listOfPlayableMoves.Add((xcords - 2, ycords - 1)); }
+            if (isInBoundsX(xcords - 2) && isInBoundsY(ycords - 1) && !doesTileHaveAChessPiece(xcords - 2, ycords - 1)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords - 2, ycords - 1)),xcords,ycords,xcords - 2, ycords - 1); }
+            if (isInBoundsX(xcords - 2) && isInBoundsY(ycords - 1) && doesTileHaveAChessPiece(xcords - 2, ycords - 1) && isAChessPieceBlackOrWhite(xcords - 2, ycords - 1) == "black") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords - 2, ycords - 1)), xcords, ycords, xcords - 2, ycords - 1); }
 
-            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords - 2) && !doesTileHaveAChessPiece(xcords - 1, ycords - 2)) { listOfPlayableMoves.Add((xcords - 1, ycords - 2)); }
-            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords - 2) && doesTileHaveAChessPiece(xcords - 1, ycords - 2) && isAChessPieceBlackOrWhite(xcords - 1, ycords - 2) == "black") { listOfPlayableMoves.Add((xcords - 1, ycords - 2)); }
+            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords - 2) && !doesTileHaveAChessPiece(xcords - 1, ycords - 2)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords - 1, ycords - 2)), xcords, ycords, xcords - 1, ycords - 2); }
+            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords - 2) && doesTileHaveAChessPiece(xcords - 1, ycords - 2) && isAChessPieceBlackOrWhite(xcords - 1, ycords - 2) == "black") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords - 1, ycords - 2)), xcords, ycords, xcords - 1, ycords - 2); }
 
         }
 
@@ -488,8 +501,8 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
         {
             for (int i = 1; i < 8; i++)
             {
-                if (isInBoundsX(xcords - i) && isInBoundsY(ycords + i) && !doesTileHaveAChessPiece(xcords - i, ycords + i)) { listOfPlayableMoves.Add((xcords - i, ycords + i)); }
-                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords - i, ycords + i) && isAChessPieceBlackOrWhite(xcords - i, ycords + i) == "white") { listOfPlayableMoves.Add((xcords - i, ycords + i)); break; }
+                if (isInBoundsX(xcords - i) && isInBoundsY(ycords + i) && !doesTileHaveAChessPiece(xcords - i, ycords + i)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords - i, ycords + i)), xcords, ycords, xcords - i, ycords + i); }
+                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords - i, ycords + i) && isAChessPieceBlackOrWhite(xcords - i, ycords + i) == "white") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords - i, ycords + i)), xcords, ycords, xcords - i, ycords + i); break; }
                 else if (isInBoundsX(xcords - i) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords - i, ycords + i) && isAChessPieceBlackOrWhite(xcords - i, ycords + i) == "black") { break; }
                 else { break; }
             }
@@ -498,8 +511,8 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
         {
             for (int i = 1; i < 8; i++)
             {
-                if (isInBoundsX(xcords + i) && isInBoundsY(ycords + i) && !doesTileHaveAChessPiece(xcords + i, ycords + i)) { listOfPlayableMoves.Add((xcords + i, ycords + i)); }
-                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords + i, ycords + i) && isAChessPieceBlackOrWhite(xcords + i, ycords + i) == "white") { listOfPlayableMoves.Add((xcords + i, ycords + i)); break; }
+                if (isInBoundsX(xcords + i) && isInBoundsY(ycords + i) && !doesTileHaveAChessPiece(xcords + i, ycords + i)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords + i, ycords + i)), xcords, ycords, xcords + i, ycords + i); }
+                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords + i, ycords + i) && isAChessPieceBlackOrWhite(xcords + i, ycords + i) == "white") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords + i, ycords + i)), xcords, ycords, xcords + i, ycords + i); break; }
                 else if (isInBoundsX(xcords + i) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords + i, ycords + i) && isAChessPieceBlackOrWhite(xcords + i, ycords + i) == "black") { break; }
                 else { break; }
             }
@@ -509,8 +522,8 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
         {
             for (int i = 1; i < 8; i++)
             {
-                if (isInBoundsX(xcords - i) && isInBoundsY(ycords - i) && !doesTileHaveAChessPiece(xcords - i, ycords - i)) { listOfPlayableMoves.Add((xcords - i, ycords - i)); }
-                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords - i, ycords - i) && isAChessPieceBlackOrWhite(xcords - i, ycords - i) == "white") { listOfPlayableMoves.Add((xcords - i, ycords - i)); break; }
+                if (isInBoundsX(xcords - i) && isInBoundsY(ycords - i) && !doesTileHaveAChessPiece(xcords - i, ycords - i)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords - i, ycords - i)), xcords, ycords, xcords - i, ycords - i); }
+                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords - i, ycords - i) && isAChessPieceBlackOrWhite(xcords - i, ycords - i) == "white") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords - i, ycords - i)), xcords, ycords, xcords - i, ycords - i); break; }
                 else if (isInBoundsX(xcords - i) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords - i, ycords - i) && isAChessPieceBlackOrWhite(xcords - i, ycords - i) == "black") { break; }
                 else { break; }
             }
@@ -519,8 +532,8 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
         {
             for (int i = 1; i < 8; i++)
             {
-                if (isInBoundsX(xcords + i) && isInBoundsY(ycords - i) && !doesTileHaveAChessPiece(xcords + i, ycords - i)) { listOfPlayableMoves.Add((xcords + i, ycords - i)); }
-                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords + i, ycords - i) && isAChessPieceBlackOrWhite(xcords + i, ycords - i) == "white") { listOfPlayableMoves.Add((xcords + i, ycords - i)); break; }
+                if (isInBoundsX(xcords + i) && isInBoundsY(ycords - i) && !doesTileHaveAChessPiece(xcords + i, ycords - i)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords + i, ycords - i)), xcords, ycords, xcords + i, ycords - i); }
+                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords + i, ycords - i) && isAChessPieceBlackOrWhite(xcords + i, ycords - i) == "white") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords + i, ycords - i)), xcords, ycords, xcords + i, ycords - i); break; }
                 else if (isInBoundsX(xcords + i) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords + i, ycords - i) && isAChessPieceBlackOrWhite(xcords + i, ycords - i) == "black") { break; }
                 else { break; }
             }
@@ -530,8 +543,8 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
         {
             for (int i = 1; i < 8; i++)
             {
-                if (isInBoundsX(xcords + i) && !doesTileHaveAChessPiece(xcords + i, ycords)) { listOfPlayableMoves.Add((xcords + i, ycords)); }
-                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords) && doesTileHaveAChessPiece(xcords + i, ycords) && isAChessPieceBlackOrWhite(xcords + i, ycords) == "white") { listOfPlayableMoves.Add((xcords + i, ycords)); break; }
+                if (isInBoundsX(xcords + i) && !doesTileHaveAChessPiece(xcords + i, ycords)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords + i, ycords)), xcords, ycords, xcords + i, ycords); }
+                else if (isInBoundsX(xcords + i) && isInBoundsY(ycords) && doesTileHaveAChessPiece(xcords + i, ycords) && isAChessPieceBlackOrWhite(xcords + i, ycords) == "white") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords + i, ycords)), xcords, ycords, xcords + i, ycords); break; }
                 else if (isInBoundsX(xcords + i) && isInBoundsY(ycords) && doesTileHaveAChessPiece(xcords + i, ycords) && isAChessPieceBlackOrWhite(xcords + i, ycords) == "black") { break; }
                 else { break; }
             }
@@ -541,8 +554,8 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
         {
             for (int i = 1; i < 8; i++)
             {
-                if (isInBoundsX(xcords - i) && !doesTileHaveAChessPiece(xcords - i, ycords)) { listOfPlayableMoves.Add((xcords - i, ycords)); }
-                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords) && doesTileHaveAChessPiece(xcords - i, ycords) && isAChessPieceBlackOrWhite(xcords - i, ycords) == "white") { listOfPlayableMoves.Add((xcords - i, ycords)); break; }
+                if (isInBoundsX(xcords - i) && !doesTileHaveAChessPiece(xcords - i, ycords)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords - i, ycords)), xcords, ycords, xcords - i, ycords); }
+                else if (isInBoundsX(xcords - i) && isInBoundsY(ycords) && doesTileHaveAChessPiece(xcords - i, ycords) && isAChessPieceBlackOrWhite(xcords - i, ycords) == "white") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords - i, ycords)),xcords,ycords,xcords - i,ycords); break; }
                 else if (isInBoundsX(xcords - i) && isInBoundsY(ycords) && doesTileHaveAChessPiece(xcords - i, ycords) && isAChessPieceBlackOrWhite(xcords - i, ycords) == "black") { break; }
                 else { break; }
             }
@@ -552,8 +565,8 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
         {
             for (int i = 1; i < 8; i++)
             {
-                if (isInBoundsY(ycords + i) && !doesTileHaveAChessPiece(xcords, ycords + i)) { listOfPlayableMoves.Add((xcords, ycords + i)); }
-                else if (isInBoundsX(xcords) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords, ycords + i) && isAChessPieceBlackOrWhite(xcords, ycords + i) == "white") { listOfPlayableMoves.Add((xcords, ycords + i)); break; }
+                if (isInBoundsY(ycords + i) && !doesTileHaveAChessPiece(xcords, ycords + i)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords, ycords + i)), xcords, ycords, xcords, ycords + i); }
+                else if (isInBoundsX(xcords) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords, ycords + i) && isAChessPieceBlackOrWhite(xcords, ycords + i) == "white") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords, ycords + i)), xcords, ycords, xcords, ycords + i); break; }
                 else if (isInBoundsX(xcords) && isInBoundsY(ycords + i) && doesTileHaveAChessPiece(xcords, ycords + i) && isAChessPieceBlackOrWhite(xcords, ycords + i) == "black") { break; }
                 else { break; }
             }
@@ -563,8 +576,8 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
         {
             for (int i = 1; i < 8; i++)
             {
-                if (isInBoundsY(ycords - i) && !doesTileHaveAChessPiece(xcords, ycords - i)) { listOfPlayableMoves.Add((xcords, ycords - i)); }
-                else if (isInBoundsX(xcords) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords, ycords - i) && isAChessPieceBlackOrWhite(xcords, ycords - i) == "white") { listOfPlayableMoves.Add((xcords, ycords - i)); break; }
+                if (isInBoundsY(ycords - i) && !doesTileHaveAChessPiece(xcords, ycords - i)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords, ycords - i)), xcords, ycords, xcords, ycords - i); }
+                else if (isInBoundsX(xcords) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords, ycords - i) && isAChessPieceBlackOrWhite(xcords, ycords - i) == "white") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords, ycords - i)),xcords,ycords,xcords,ycords - i); break; }
                 else if (isInBoundsX(xcords) && isInBoundsY(ycords - i) && doesTileHaveAChessPiece(xcords, ycords - i) && isAChessPieceBlackOrWhite(xcords, ycords - i) == "black") { break; }
                 else { break; }
             }
@@ -572,30 +585,30 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
 
         private void blKnightMoves(int xcords, int ycords)
         {
-            if (isInBoundsX(xcords + 1) && isInBoundsY(ycords + 2) && !doesTileHaveAChessPiece(xcords + 1, ycords + 2)) { listOfPlayableMoves.Add((xcords + 1, ycords + 2)); }
-            if (isInBoundsX(xcords + 1) && isInBoundsY(ycords + 2) && doesTileHaveAChessPiece(xcords + 1, ycords + 2) && isAChessPieceBlackOrWhite(xcords + 1, ycords + 2) == "white") { listOfPlayableMoves.Add((xcords + 1, ycords + 2)); }
+            if (isInBoundsX(xcords + 1) && isInBoundsY(ycords + 2) && !doesTileHaveAChessPiece(xcords + 1, ycords + 2)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords + 1, ycords + 2)), xcords, ycords, xcords + 1, ycords + 2); }
+            if (isInBoundsX(xcords + 1) && isInBoundsY(ycords + 2) && doesTileHaveAChessPiece(xcords + 1, ycords + 2) && isAChessPieceBlackOrWhite(xcords + 1, ycords + 2) == "white") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords + 1, ycords + 2)), xcords, ycords, xcords + 1, ycords + 2); }
 
-            if (isInBoundsX(xcords + 2) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords + 2, ycords + 1)) { listOfPlayableMoves.Add((xcords + 2, ycords + 1)); }
-            if (isInBoundsX(xcords + 2) && isInBoundsY(ycords + 1) && doesTileHaveAChessPiece(xcords + 2, ycords + 1) && isAChessPieceBlackOrWhite(xcords + 2, ycords + 1) == "white") { listOfPlayableMoves.Add((xcords + 2, ycords + 1)); }
+            if (isInBoundsX(xcords + 2) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords + 2, ycords + 1)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords + 2, ycords + 1)), xcords, ycords, xcords + 2, ycords + 1); }
+            if (isInBoundsX(xcords + 2) && isInBoundsY(ycords + 1) && doesTileHaveAChessPiece(xcords + 2, ycords + 1) && isAChessPieceBlackOrWhite(xcords + 2, ycords + 1) == "white") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords + 2, ycords + 1)), xcords, ycords, xcords + 2, ycords + 1); }
 
-            if (isInBoundsX(xcords + 2) && isInBoundsY(ycords - 1) && !doesTileHaveAChessPiece(xcords + 2, ycords - 1)) { listOfPlayableMoves.Add((xcords + 2, ycords - 1)); }
-            if (isInBoundsX(xcords + 2) && isInBoundsY(ycords - 1) && doesTileHaveAChessPiece(xcords + 2, ycords - 1) && isAChessPieceBlackOrWhite(xcords + 2, ycords - 1) == "white") { listOfPlayableMoves.Add((xcords + 2, ycords - 1)); }
+            if (isInBoundsX(xcords + 2) && isInBoundsY(ycords - 1) && !doesTileHaveAChessPiece(xcords + 2, ycords - 1)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords + 2, ycords - 1)), xcords, ycords, xcords + 2, ycords - 1); }
+            if (isInBoundsX(xcords + 2) && isInBoundsY(ycords - 1) && doesTileHaveAChessPiece(xcords + 2, ycords - 1) && isAChessPieceBlackOrWhite(xcords + 2, ycords - 1) == "white") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords + 2, ycords - 1)), xcords, ycords, xcords + 2, ycords - 1); }
 
-            if (isInBoundsX(xcords + 1) && isInBoundsY(ycords - 2) && !doesTileHaveAChessPiece(xcords + 1, ycords - 2)) { listOfPlayableMoves.Add((xcords + 1, ycords - 2)); }
-            if (isInBoundsX(xcords + 1) && isInBoundsY(ycords - 2) && doesTileHaveAChessPiece(xcords + 1, ycords - 2) && isAChessPieceBlackOrWhite(xcords + 1, ycords - 2) == "white") { listOfPlayableMoves.Add((xcords + 1, ycords - 2)); }
+            if (isInBoundsX(xcords + 1) && isInBoundsY(ycords - 2) && !doesTileHaveAChessPiece(xcords + 1, ycords - 2)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords + 1, ycords - 2)), xcords, ycords, xcords + 1, ycords - 2); }
+            if (isInBoundsX(xcords + 1) && isInBoundsY(ycords - 2) && doesTileHaveAChessPiece(xcords + 1, ycords - 2) && isAChessPieceBlackOrWhite(xcords + 1, ycords - 2) == "white") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords + 1, ycords - 2)), xcords, ycords, xcords + 1, ycords - 2); }
 
 
-            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords + 2) && !doesTileHaveAChessPiece(xcords - 1, ycords + 2)) { listOfPlayableMoves.Add((xcords - 1, ycords + 2)); }
-            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords + 2) && doesTileHaveAChessPiece(xcords - 1, ycords + 2) && isAChessPieceBlackOrWhite(xcords - 1, ycords + 2) == "white") { listOfPlayableMoves.Add((xcords - 1, ycords + 2)); }
+            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords + 2) && !doesTileHaveAChessPiece(xcords - 1, ycords + 2)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords - 1, ycords + 2)), xcords, ycords, xcords - 1, ycords + 2); }
+            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords + 2) && doesTileHaveAChessPiece(xcords - 1, ycords + 2) && isAChessPieceBlackOrWhite(xcords - 1, ycords + 2) == "white") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords - 1, ycords + 2)), xcords, ycords, xcords - 1, ycords + 2); }
 
-            if (isInBoundsX(xcords - 2) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords - 2, ycords + 1)) { listOfPlayableMoves.Add((xcords - 2, ycords + 1)); }
-            if (isInBoundsX(xcords - 2) && isInBoundsY(ycords + 1) && doesTileHaveAChessPiece(xcords - 2, ycords + 1) && isAChessPieceBlackOrWhite(xcords - 2, ycords + 1) == "white") { listOfPlayableMoves.Add((xcords - 2, ycords + 1)); }
+            if (isInBoundsX(xcords - 2) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords - 2, ycords + 1)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords - 2, ycords + 1)), xcords, ycords, xcords - 2, ycords + 1); }
+            if (isInBoundsX(xcords - 2) && isInBoundsY(ycords + 1) && doesTileHaveAChessPiece(xcords - 2, ycords + 1) && isAChessPieceBlackOrWhite(xcords - 2, ycords + 1) == "white") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords - 2, ycords + 1)), xcords, ycords, xcords - 2, ycords + 1); }
 
-            if (isInBoundsX(xcords - 2) && isInBoundsY(ycords - 1) && !doesTileHaveAChessPiece(xcords - 2, ycords - 1)) { listOfPlayableMoves.Add((xcords - 2, ycords - 1)); }
-            if (isInBoundsX(xcords - 2) && isInBoundsY(ycords - 1) && doesTileHaveAChessPiece(xcords - 2, ycords - 1) && isAChessPieceBlackOrWhite(xcords - 2, ycords - 1) == "white") { listOfPlayableMoves.Add((xcords - 2, ycords - 1)); }
+            if (isInBoundsX(xcords - 2) && isInBoundsY(ycords - 1) && !doesTileHaveAChessPiece(xcords - 2, ycords - 1)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords - 2, ycords - 1)), xcords, ycords, xcords - 2, ycords - 1); }
+            if (isInBoundsX(xcords - 2) && isInBoundsY(ycords - 1) && doesTileHaveAChessPiece(xcords - 2, ycords - 1) && isAChessPieceBlackOrWhite(xcords - 2, ycords - 1) == "white") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords - 2, ycords - 1)), xcords, ycords, xcords - 2, ycords - 1); }
 
-            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords - 2) && !doesTileHaveAChessPiece(xcords - 1, ycords - 2)) { listOfPlayableMoves.Add((xcords - 1, ycords - 2)); }
-            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords - 2) && doesTileHaveAChessPiece(xcords - 1, ycords - 2) && isAChessPieceBlackOrWhite(xcords - 1, ycords - 2) == "white") { listOfPlayableMoves.Add((xcords - 1, ycords - 2)); }
+            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords - 2) && !doesTileHaveAChessPiece(xcords - 1, ycords - 2)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords - 1, ycords - 2)), xcords, ycords, xcords - 1, ycords - 2); }
+            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords - 2) && doesTileHaveAChessPiece(xcords - 1, ycords - 2) && isAChessPieceBlackOrWhite(xcords - 1, ycords - 2) == "white") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords - 1, ycords - 2)), xcords, ycords, xcords - 1, ycords - 2); }
 
         }
 
@@ -603,38 +616,38 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
 
         {
             // diagonal right chess piece take 
-            if (isInBoundsX(xcords + 1) && doesTileHaveAChessPiece(xcords + 1, ycords + 1) && isAChessPieceBlackOrWhite(xcords + 1, ycords + 1) == "black") { listOfPlayableMoves.Add((xcords + 1, ycords + 1)); }
+            if (isInBoundsX(xcords + 1) && doesTileHaveAChessPiece(xcords + 1, ycords + 1) && isAChessPieceBlackOrWhite(xcords + 1, ycords + 1) == "black") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords + 1, ycords + 1)), xcords, ycords, xcords + 1, ycords + 1); }
 
             // diagonal left chess piece take 
-            if (isInBoundsX(xcords - 1) && doesTileHaveAChessPiece(xcords - 1, ycords + 1) && isAChessPieceBlackOrWhite(xcords - 1, ycords + 1) == "black") { listOfPlayableMoves.Add((xcords - 1, ycords + 1)); }
+            if (isInBoundsX(xcords - 1) && doesTileHaveAChessPiece(xcords - 1, ycords + 1) && isAChessPieceBlackOrWhite(xcords - 1, ycords + 1) == "black") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords - 1, ycords + 1)), xcords, ycords, xcords - 1, ycords + 1); }
 
             // move up 1 tile 
             if (doesTileHaveAChessPiece(xcords, ycords + 1)) { return listOfPlayableMoves; }
-            listOfPlayableMoves.Add((xcords, ycords + 1));
+            CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords, ycords + 1)), xcords, ycords, xcords, ycords + 1);
 
             // move up 2 tiles 
             if (doesTileHaveAChessPiece(xcords, ycords + 2)) { return listOfPlayableMoves; }
 
-            if (board[FindPosition(sender, board).Item1, FindPosition(sender, board).Item2].didTheFirstMove == false) { listOfPlayableMoves.Add((xcords, ycords + 2)); }
+            if (board[FindPosition(sender, board).Item1, FindPosition(sender, board).Item2].didTheFirstMove == false) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords, ycords + 2)),xcords,ycords,xcords,ycords + 2); }
             return listOfPlayableMoves;
         }
         private List<(int, int)> blPawnMoves(object sender, int xcords, int ycords)
 
         {
             // diagonal right chess piece take 
-            if (isInBoundsX(xcords + 1) && doesTileHaveAChessPiece(xcords + 1, ycords - 1) && isAChessPieceBlackOrWhite(xcords + 1, ycords - 1) == "white") { listOfPlayableMoves.Add((xcords + 1, ycords - 1)); }
+            if (isInBoundsX(xcords + 1) && doesTileHaveAChessPiece(xcords + 1, ycords - 1) && isAChessPieceBlackOrWhite(xcords + 1, ycords - 1) == "white") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords + 1, ycords - 1)),xcords,ycords,xcords + 1,ycords - 1); }
 
             // diagonal left chess piece take 
-            if (isInBoundsX(xcords - 1) && doesTileHaveAChessPiece(xcords - 1, ycords - 1) && isAChessPieceBlackOrWhite(xcords - 1, ycords - 1) == "white") { listOfPlayableMoves.Add((xcords - 1, ycords - 1)); }
+            if (isInBoundsX(xcords - 1) && doesTileHaveAChessPiece(xcords - 1, ycords - 1) && isAChessPieceBlackOrWhite(xcords - 1, ycords - 1) == "white") { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords - 1, ycords - 1)),xcords,ycords,xcords - 1, ycords - 1); }
 
             // move up 1 tile 
             if (doesTileHaveAChessPiece(xcords, ycords - 1)) { return listOfPlayableMoves; }
-            listOfPlayableMoves.Add((xcords, ycords - 1));
+            CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords, ycords - 1)),xcords,ycords,xcords,ycords - 1);
 
             // move up 2 tiles 
             if (doesTileHaveAChessPiece(xcords, ycords - 2)) { return listOfPlayableMoves; }
 
-            if (board[FindPosition(sender, board).Item1, FindPosition(sender, board).Item2].didTheFirstMove == false) { listOfPlayableMoves.Add((xcords, ycords - 2)); }
+            if (board[FindPosition(sender, board).Item1, FindPosition(sender, board).Item2].didTheFirstMove == false) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords, ycords - 2)),xcords,ycords,xcords,ycords - 2); }
             return listOfPlayableMoves;
         }
 
@@ -1395,7 +1408,7 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
                     break;
             }
 
-            if (isInBoundsX(xcords) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords, ycords + 1) && isTileSafe(board[xcords, ycords + 1].Name)) { listOfPlayableMoves.Add((xcords, ycords + 1)); }
+            if (isInBoundsX(xcords) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords, ycords + 1) && isTileSafe(board[xcords, ycords + 1].Name)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords, ycords + 1)),xcords,ycords,xcords,ycords + 1); }
             if (isInBoundsX(xcords + 1) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords + 1, ycords + 1) && isTileSafe(board[xcords + 1, ycords + 1].Name)) { listOfPlayableMoves.Add((xcords + 1, ycords + 1)); }
             if (isInBoundsX(xcords + 1) && isInBoundsY(ycords) && !doesTileHaveAChessPiece(xcords + 1, ycords) && isTileSafe(board[xcords + 1, ycords].Name)) { listOfPlayableMoves.Add((xcords + 1, ycords)); }
             if (isInBoundsX(xcords + 1) && isInBoundsY(ycords - 1) && !doesTileHaveAChessPiece(xcords + 1, ycords - 1) && isTileSafe(board[xcords + 1, ycords - 1].Name)) { listOfPlayableMoves.Add((xcords + 1, ycords - 1)); }
