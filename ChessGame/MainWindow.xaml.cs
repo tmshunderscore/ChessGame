@@ -365,7 +365,8 @@ System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
 
         private bool doesTileHaveAChessPiece(int xcords, int ycords)
         {
-            if (!isInBoundsY(ycords+1)) {  return false; }
+            //if (!isInBoundsY(ycords+1)) {  return false; }
+            if (!isInBoundsY(ycords)) { return false; }
             if (((TextBlock)chessboard.FindName(board[xcords, ycords].Name)).Text != "") { return true; }
             return false;
         }
