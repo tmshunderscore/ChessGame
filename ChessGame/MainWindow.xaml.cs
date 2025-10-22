@@ -70,6 +70,7 @@ namespace ChessGame
             // check if move puts king in check => move illegal
             saveTheBoard();
             ((TextBlock)chessboard.FindName(board[destxcords, destycords].Name)).Text = ((TextBlock)chessboard.FindName(board[srcxcords, srcycords].Name)).Text;
+            ((TextBlock)chessboard.FindName(board[srcxcords, srcycords].Name)).Text = "";
             ((TextBlock)chessboard.FindName(board[destxcords, destycords].Name)).Foreground = ((TextBlock)chessboard.FindName(board[srcxcords, srcycords].Name)).Foreground;
             if (!isKingChecked()) { addMove(); loadTheBoard(); return; }
                 loadTheBoard();
@@ -130,7 +131,7 @@ namespace ChessGame
 
                 foreach(var pospla in listOfPlayableMoves)
 {
-System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
+                System.Diagnostics.Debug.WriteLine(board[pospla.Item1, pospla.Item2].Name);
 }
             saveTheBoard();
 
