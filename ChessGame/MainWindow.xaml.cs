@@ -1,6 +1,8 @@
-﻿using System.Drawing;
+﻿using System.ComponentModel;
+using System.Drawing;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -63,6 +65,72 @@ namespace ChessGame
             this.Loaded += MainWindow_Loaded;
             this.KeyDown += new KeyEventHandler(DebugShow);
            
+        }
+
+        private async Task selectTile(object sender, MouseButtonEventArgs e)
+        {
+
+            if (((TextBlock)sender).Text == "" && phase == selectTileState.select) { return; }
+
+            switch (phase)
+            {
+
+                case selectTileState.select:
+                    if (((TextBlock)sender).Foreground == Brushes.White && playerTurn == turn.whitesTurn || ((TextBlock)sender).Foreground == Brushes.Black && playerTurn == turn.blacksTurn)
+                    {
+
+
+                        currentSender = sender;
+
+                        ((TextBlock)sender).Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#00000000");
+
+
+                        ColorTileByPosition(ruleset(sender, FindPosition(sender, board).Item2, FindPosition(sender, board).Item1));
+
+
+
+
+                        phase = selectTileState.move;
+                    }
+                    break;
+
+                case selectTileState.move:
+                    ClearTileColorByPosition(listOfPlayableMoves, currentSender);
+                    MoveChessPiece(sender, listOfPlayableMoves, currentSender);
+
+                    if(CheckPromotions() != -1){
+                        PromotionSelection.Visibility = Visibility.Visible;
+                        
+                    }
+
+                    phase = selectTileState.select;
+                    if (isKingChecked() && !doesKingHaveMoves(findKingPos().Item1, findKingPos().Item2))
+                    {
+                        if (isTheGameOver())
+                        {
+                            System.Diagnostics.Debug.WriteLine("You lost");
+                            System.Windows.Application.Current.Shutdown();
+                        }
+                    }
+                    break;
+
+            }
+
+
+
+
+        }
+
+        private int CheckPromotions()
+        {
+            for(int i = 0; i < 8; i++)
+            {
+                if (((TextBlock)chessboard.FindName(board[i, 7].Name)).Text == "♟️")
+                {
+                return i;
+                }
+            }
+            return -1;
         }
 
         private void CheckIfMoveIsLegal(Action addMove,int srcxcords, int srcycords, int destxcords, int destycords)
@@ -277,55 +345,7 @@ namespace ChessGame
 
 
 
-        private void selectTile(object sender, MouseButtonEventArgs e)
-        {
-            
-            if (((TextBlock)sender).Text == "" && phase == selectTileState.select) { return; }
-
-            switch (phase)
-            {
-
-                case selectTileState.select:
-                    if (((TextBlock)sender).Foreground == Brushes.White && playerTurn == turn.whitesTurn || ((TextBlock)sender).Foreground == Brushes.Black && playerTurn == turn.blacksTurn)
-                    {
-
-
-                        currentSender = sender;
-
-                        ((TextBlock)sender).Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#00000000");
-
-
-                        ColorTileByPosition(ruleset(sender, FindPosition(sender, board).Item2, FindPosition(sender, board).Item1));
-
-                        
-
-
-                        phase = selectTileState.move;
-                    }
-                    break;
-
-                case selectTileState.move:
-                    ClearTileColorByPosition(listOfPlayableMoves, currentSender);
-                    MoveChessPiece(sender, listOfPlayableMoves, currentSender);
-
-
-                    phase = selectTileState.select;
-                    if (isKingChecked() && !doesKingHaveMoves(findKingPos().Item1, findKingPos().Item2))
-                    {
-                        if (isTheGameOver())
-                        {
-                            System.Diagnostics.Debug.WriteLine("You lost");
-                            System.Windows.Application.Current.Shutdown();
-                        }
-                    }
-                    break;
-
-            }
-
-           
-
-            
-        }
+        
 
 
         private void MoveChessPiece(object sender, List<(int, int)> listOfPlayableMoves, object previousSender)
@@ -1442,6 +1462,30 @@ namespace ChessGame
             if (isInBoundsX(xcords - 1) && isInBoundsY(ycords) && (!doesTileHaveAChessPiece(xcords - 1, ycords) || isAChessPieceBlackOrWhite(xcords - 1, ycords) == color) && isTileSafe(board[xcords - 1, ycords].Name)) { listOfPlayableMoves.Add((xcords - 1, ycords)); }
             if (isInBoundsX(xcords - 1) && isInBoundsY(ycords + 1) && (!doesTileHaveAChessPiece(xcords - 1, ycords + 1) || isAChessPieceBlackOrWhite(xcords -1 , ycords + 1) == color) && isTileSafe(board[xcords - 1, ycords + 1].Name)) { listOfPlayableMoves.Add((xcords - 1, ycords + 1)); }
         }
+
+        private void Promotion(object sender, MouseButtonEventArgs e)
+        {
+            switch (((TextBlock)sender).Text)
+            {
+                case "♕":
+
+                    break;
+
+                case "♖":
+
+                    break;
+
+                case "♗":
+
+                    break;
+
+                case "♘":
+
+                    break;
+            }
+            PromotionSelection.Visibility = Visibility.Hidden;
+        }
+
 
 
     }
