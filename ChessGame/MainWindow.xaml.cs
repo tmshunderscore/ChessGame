@@ -26,6 +26,7 @@ namespace ChessGame
         Save[,] safeBoard = new Save[8, 8];
         List<(int,int)> listOfPlayableMoves = new List<(int,int)>();
         List<(int,int)> listOfDangerousMoves = new List<(int,int)>();
+        TaskCompletionSource<string> _inputTaskSource;
         List<Action> listOfCommands = new List<Action>();
         String boardRow;
         selectTileState phase = selectTileState.select;
@@ -67,7 +68,7 @@ namespace ChessGame
            
         }
 
-        private async Task selectTile(object sender, MouseButtonEventArgs e)
+        private void selectTile(object sender, MouseButtonEventArgs e)
         {
 
             if (((TextBlock)sender).Text == "" && phase == selectTileState.select) { return; }
@@ -98,8 +99,8 @@ namespace ChessGame
                     ClearTileColorByPosition(listOfPlayableMoves, currentSender);
                     MoveChessPiece(sender, listOfPlayableMoves, currentSender);
 
-                    if(CheckPromotions() != -1){
-                        PromotionSelection.Visibility = Visibility.Visible;
+                    if (CheckPromotions() != -1) {
+                        Promote();
                         
                     }
 
@@ -119,6 +120,39 @@ namespace ChessGame
 
 
 
+        }
+        private async Task Promote()
+        {
+            PromotionSelection.Visibility = Visibility.Visible;
+            _inputTaskSource = new TaskCompletionSource<string>();
+
+            string selectedPiece = await _inputTaskSource.Task;
+            System.Diagnostics.Debug.WriteLine($"Player selected: {selectedPiece}");
+
+            switch (selectedPiece)
+            {
+                case "queen":
+                    ((TextBlock)chessboard.FindName(board[CheckPromotions(),7].Name)).Text = "♕";
+                    break;
+                case "rook":
+                    ((TextBlock)chessboard.FindName(board[CheckPromotions(), 7].Name)).Text = "♖";
+                    break;
+                case "bishop":
+                    ((TextBlock)chessboard.FindName(board[CheckPromotions(), 7].Name)).Text = "♗";
+                    break;
+                case "knight":
+                    ((TextBlock)chessboard.FindName(board[CheckPromotions(), 7].Name)).Text = "♘";
+                    break;
+            }
+
+            if (isKingChecked() && !doesKingHaveMoves(findKingPos().Item1, findKingPos().Item2))
+            {
+                if (isTheGameOver())
+                {
+                    System.Diagnostics.Debug.WriteLine("You lost");
+                    System.Windows.Application.Current.Shutdown();
+                }
+            }
         }
 
         private int CheckPromotions()
@@ -1463,26 +1497,28 @@ namespace ChessGame
             if (isInBoundsX(xcords - 1) && isInBoundsY(ycords + 1) && (!doesTileHaveAChessPiece(xcords - 1, ycords + 1) || isAChessPieceBlackOrWhite(xcords -1 , ycords + 1) == color) && isTileSafe(board[xcords - 1, ycords + 1].Name)) { listOfPlayableMoves.Add((xcords - 1, ycords + 1)); }
         }
 
-        private void Promotion(object sender, MouseButtonEventArgs e)
+        private async void Promotion(object sender, MouseButtonEventArgs e)
         {
+            string var = null;
             switch (((TextBlock)sender).Text)
             {
                 case "♕":
-
+                    var = "queen";
                     break;
 
                 case "♖":
-
+                    var = "rook";
                     break;
 
                 case "♗":
-
+                    var = "bishop";
                     break;
 
                 case "♘":
-
+                    var = "knight";
                     break;
             }
+            _inputTaskSource?.TrySetResult(var);
             PromotionSelection.Visibility = Visibility.Hidden;
         }
 
