@@ -113,6 +113,16 @@ namespace ChessGame
                             System.Windows.Application.Current.Shutdown();
                         }
                     }
+
+                    if (!isKingChecked() && !doesKingHaveMoves(findKingPos().Item1, findKingPos().Item2))
+                    {
+                        if (isTheGameTied())
+                        {
+                            System.Diagnostics.Debug.WriteLine("You tied");
+                            System.Windows.Application.Current.Shutdown();
+                        }
+                    }
+
                     break;
 
             }
@@ -153,13 +163,16 @@ namespace ChessGame
                     System.Windows.Application.Current.Shutdown();
                 }
             }
+            
         }
 
         private int CheckPromotions()
         {
             for(int i = 0; i < 8; i++)
             {
-                if (((TextBlock)chessboard.FindName(board[i, 7].Name)).Text == "♟️")
+                SolidColorBrush temp;
+                
+                if (((TextBlock)chessboard.FindName(board[i, 7].Name)).Text == "♟️" && ((TextBlock)chessboard.FindName(board[i, 7].Name)).Foreground == Brushes.White)
                 {
                 return i;
                 }
@@ -225,6 +238,22 @@ namespace ChessGame
             }
         }
 
+        private bool CalculateAmountOfMoves(Action specialcommand, int i, int j)
+        {
+            saveTheBoard();
+            listOfPlayableMoves.Clear();
+            specialcommand();
+
+            
+                if (listOfPlayableMoves.Count == 0)
+                {
+                    return false;
+                }
+
+            return true;
+        }
+
+
         private bool CalculateMoves(Action specialcommand, int i, int j)
         {
             saveTheBoard();
@@ -252,6 +281,126 @@ namespace ChessGame
             }
             return false;
             System.Diagnostics.Debug.WriteLine("KING IS CHECKMATED");
+        }
+
+        private bool isTheGameTied()
+        {
+            //TODO: check if player has any moves left
+            for (int i = 0; i <= 7; i++)
+            {
+                for (int j = 0; j <= 7; j++)
+                {
+                    switch (((TextBlock)chessboard.FindName(board[i, j].Name)).Text)
+                    {
+                        case "♟️":
+                            switch (playerTurn)
+                            {
+                                case turn.whitesTurn:
+                                    if (isAChessPieceBlackOrWhite(i, j) == "white")
+                                    {
+                                        if (CalculateAmountOfMoves(() => whPawnMoves(i, j), i, j)) { return false; }
+                                    }
+                                    break;
+
+                                case turn.blacksTurn:
+
+                                    break;
+                            }
+                            break;
+
+                        case "♘":
+                            switch (playerTurn)
+                            {
+                                case turn.whitesTurn:
+                                    if (isAChessPieceBlackOrWhite(i, j) == "white")
+                                    {
+                                        if (CalculateAmountOfMoves(() => whKnightMoves(i, j), i, j)) { return false; }
+                                    }
+                                    break;
+                                case turn.blacksTurn:
+                                    if (isAChessPieceBlackOrWhite(i, j) == "black")
+                                    {
+                                        if (CalculateAmountOfMoves(() => blKnightMoves(i, j), i, j)) { return false; }
+                                    }
+                                    break;
+                            }
+                            break;
+
+                        case "♗":
+                            switch (playerTurn)
+                            {
+                                case turn.whitesTurn:
+                                    if (isAChessPieceBlackOrWhite(i, j) == "white")
+                                    {
+                                        if (CalculateAmountOfMoves(() => whBishopMoves(i, j), i, j)) { return false; }
+                                    }
+                                    break;
+                                case turn.blacksTurn:
+                                    if (isAChessPieceBlackOrWhite(i, j) == "black")
+                                    {
+                                        if (CalculateAmountOfMoves(() => blBishopMoves(i, j), i, j)) { return false; }
+                                    }
+                                    break;
+                            }
+
+                            break;
+
+                        case "♖":
+                            switch (playerTurn)
+                            {
+                                case turn.whitesTurn:
+                                    if (isAChessPieceBlackOrWhite(i, j) == "white")
+                                    {
+                                        if (CalculateAmountOfMoves(() => whRookMoves(i, j), i, j)) { return false; }
+                                    }
+                                    break;
+                                case turn.blacksTurn:
+                                    if (isAChessPieceBlackOrWhite(i, j) == "black")
+                                    {
+                                        if (CalculateAmountOfMoves(() => blRookMoves(i, j), i, j)) { return false; }
+                                    }
+                                    break;
+                            }
+                            break;
+
+                        case "♕":
+                            switch (playerTurn)
+                            {
+                                case turn.whitesTurn:
+                                    if (isAChessPieceBlackOrWhite(i, j) == "white")
+                                    {
+                                        if (CalculateAmountOfMoves(() => whQueenMoves(i, j), i, j)) { return false; }
+                                    }
+                                    break;
+                                case turn.blacksTurn:
+                                    if (isAChessPieceBlackOrWhite(i, j) == "black")
+                                    {
+                                        if (CalculateAmountOfMoves(() => blQueenMoves(i, j), i, j)) { return false; }
+                                    }
+                                    break;
+                            }
+                            break;
+                        case "♔":
+                            switch (playerTurn)
+                            {
+                                case turn.whitesTurn:
+                                    if (isAChessPieceBlackOrWhite(i, j) == "white")
+                                    {
+                                        if (CalculateAmountOfMoves(() => whKingMoves(i, j), i, j)) { return false; }
+                                    }
+                                    break;
+                                case turn.blacksTurn:
+                                    if (isAChessPieceBlackOrWhite(i, j) == "black")
+                                    {
+                                        if (CalculateAmountOfMoves(() => blKingMoves(i, j), i, j)) { return false; }
+                                    }
+                                    break;
+                            }
+                            break;
+                    }
+                }
+            }
+            return true;
         }
 
         private bool isTheGameOver()
