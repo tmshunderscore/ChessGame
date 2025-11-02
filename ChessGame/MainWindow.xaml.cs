@@ -109,7 +109,7 @@ namespace ChessGame
                     {
                         if (isTheGameOver())
                         {
-                            System.Diagnostics.Debug.WriteLine("You lost");
+                            System.Diagnostics.Debug.WriteLine("You won!");
                             System.Windows.Application.Current.Shutdown();
                         }
                     }
@@ -285,7 +285,6 @@ namespace ChessGame
 
         private bool isTheGameTied()
         {
-            //TODO: check if player has any moves left
             for (int i = 0; i <= 7; i++)
             {
                 for (int j = 0; j <= 7; j++)
@@ -545,7 +544,7 @@ namespace ChessGame
                     
                 }
             }
-            if(((TextBlock)sender).Text == "♟️" && board[FindPosition(previousSender, board).Item1, FindPosition(previousSender, board).Item2].Name != board[FindPosition(sender, board).Item1, FindPosition(sender, board).Item2].Name)
+            if(((TextBlock)sender).Text == "♟️" && FindPosition(sender, board).Item2 != 1)
             {
                 board[FindPosition(previousSender, board).Item1, FindPosition(previousSender, board).Item2].didTheFirstMove = false;
                 board[FindPosition(sender, board).Item1, FindPosition(sender, board).Item2].didTheFirstMove = true;
@@ -1612,6 +1611,7 @@ namespace ChessGame
                     color = "white";
                     break;
             }
+            // TODO: Implement castling
 
             if (isInBoundsX(xcords) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords, ycords + 1) && isTileSafe(board[xcords, ycords + 1].Name)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords, ycords + 1)),xcords,ycords,xcords,ycords + 1); }
             if (isInBoundsX(xcords + 1) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords + 1, ycords + 1) && isTileSafe(board[xcords + 1, ycords + 1].Name)) { listOfPlayableMoves.Add((xcords + 1, ycords + 1)); }
