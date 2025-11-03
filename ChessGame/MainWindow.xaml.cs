@@ -34,6 +34,9 @@ namespace ChessGame
         turn savedTurn;
         object currentSender;
         bool isKingInCheck = false;
+        bool didKingMove = false;
+        bool didLeftRookMove = false;
+        bool didRightRookMove = false;
         string PlayersKingColor;
         enum selectTileState
         {
@@ -65,7 +68,7 @@ namespace ChessGame
             InitializeComponent();
             this.Loaded += MainWindow_Loaded;
             this.KeyDown += new KeyEventHandler(DebugShow);
-           
+           // TODO: Implement black inverted chessboard
         }
 
         private void selectTile(object sender, MouseButtonEventArgs e)
@@ -536,12 +539,32 @@ namespace ChessGame
             foreach (var play in listOfPlayableMoves) { 
                 if (desiredPlay == board[play.Item1,play.Item2].Name)
                 {
-                    ((TextBlock)sender).Text = ((TextBlock)previousSender).Text;
-                    ((TextBlock)sender).Foreground = ((TextBlock)previousSender).Foreground;
-                    ((TextBlock)previousSender).Text = "";
-                    switchTurns();
-                    //isKingChecked();
-                    
+                    if (((TextBlock)previousSender).Text == "♔" && FindPosition(sender, board).Item1 == FindPosition(previousSender, board).Item1 - 2) 
+                    {
+                        ((TextBlock)sender).Text = ((TextBlock)previousSender).Text;
+                        ((TextBlock)sender).Foreground = ((TextBlock)previousSender).Foreground;
+                        ((TextBlock)previousSender).Text = "";
+                        ((TextBlock)FindName(board[0,0].Name)).Text = "";
+                        ((TextBlock)FindName(board[3, 0].Name)).Text = "♖";
+                        ((TextBlock)FindName(board[3, 0].Name)).Foreground = Brushes.White;
+
+                        switchTurns();
+                    }
+                    else if (((TextBlock)previousSender).Text == "♔" && FindPosition(sender, board).Item1 == FindPosition(previousSender, board).Item1 + 2) 
+                    {
+                        ((TextBlock)sender).Text = ((TextBlock)previousSender).Text;
+                        ((TextBlock)sender).Foreground = ((TextBlock)previousSender).Foreground;
+                        ((TextBlock)previousSender).Text = "";
+                        ((TextBlock)FindName(board[7, 0].Name)).Text = "";
+                        ((TextBlock)FindName(board[5, 0].Name)).Text = "♖";
+                        ((TextBlock)FindName(board[5, 0].Name)).Foreground = Brushes.White;
+                    }
+                    else {
+                        ((TextBlock)sender).Text = ((TextBlock)previousSender).Text;
+                        ((TextBlock)sender).Foreground = ((TextBlock)previousSender).Foreground;
+                        ((TextBlock)previousSender).Text = "";
+                        switchTurns();
+                    }
                 }
             }
             if(((TextBlock)sender).Text == "♟️" && FindPosition(sender, board).Item2 != 1)
@@ -549,7 +572,19 @@ namespace ChessGame
                 board[FindPosition(previousSender, board).Item1, FindPosition(previousSender, board).Item2].didTheFirstMove = false;
                 board[FindPosition(sender, board).Item1, FindPosition(sender, board).Item2].didTheFirstMove = true;
             }
-            
+            if (((TextBlock)sender).Text == "♔" && FindPosition(sender,board).Item1 != 4 || ((TextBlock)sender).Text == "♔" && FindPosition(sender, board).Item2 != 0)
+            {
+                didKingMove = true;
+            }
+            if (((TextBlock)sender).Text == "♖" && FindPosition(previousSender, board).Item1 == 0 && board[FindPosition(previousSender, board).Item1, FindPosition(previousSender, board).Item2] != board[FindPosition(sender, board).Item1, FindPosition(sender, board).Item2] && !didLeftRookMove)
+            { 
+                didLeftRookMove = true;
+            }
+            if (((TextBlock)sender).Text == "♖" && FindPosition(previousSender, board).Item1 == 7 && board[FindPosition(previousSender, board).Item1, FindPosition(previousSender, board).Item2] != board[FindPosition(sender, board).Item1, FindPosition(sender, board).Item2] && !didRightRookMove)
+            {
+                didRightRookMove = true;
+            }
+
         }
 
 
@@ -1611,7 +1646,6 @@ namespace ChessGame
                     color = "white";
                     break;
             }
-            // TODO: Implement castling
 
             if (isInBoundsX(xcords) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords, ycords + 1) && isTileSafe(board[xcords, ycords + 1].Name)) { CheckIfMoveIsLegal(() => listOfPlayableMoves.Add((xcords, ycords + 1)),xcords,ycords,xcords,ycords + 1); }
             if (isInBoundsX(xcords + 1) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords + 1, ycords + 1) && isTileSafe(board[xcords + 1, ycords + 1].Name)) { listOfPlayableMoves.Add((xcords + 1, ycords + 1)); }
@@ -1621,6 +1655,19 @@ namespace ChessGame
             if (isInBoundsX(xcords - 1) && isInBoundsY(ycords - 1) && !doesTileHaveAChessPiece(xcords - 1, ycords - 1) && isTileSafe(board[xcords - 1, ycords - 1].Name)) { listOfPlayableMoves.Add((xcords - 1, ycords - 1)); }
             if (isInBoundsX(xcords - 1) && isInBoundsY(ycords) && !doesTileHaveAChessPiece(xcords - 1, ycords) && isTileSafe(board[xcords - 1, ycords].Name)) { listOfPlayableMoves.Add((xcords - 1, ycords)); }
             if (isInBoundsX(xcords - 1) && isInBoundsY(ycords + 1) && !doesTileHaveAChessPiece(xcords - 1, ycords + 1) && isTileSafe(board[xcords - 1, ycords + 1].Name)) { listOfPlayableMoves.Add((xcords - 1, ycords + 1)); }
+
+            if (isInBoundsX(xcords) && isInBoundsY(ycords) && !didKingMove)
+            {
+                if (!didLeftRookMove && !doesTileHaveAChessPiece(xcords-1,ycords) && !doesTileHaveAChessPiece(xcords - 2, ycords) && !doesTileHaveAChessPiece(xcords - 3, ycords) && isTileSafe(board[xcords - 2,ycords].Name))
+                {
+                    listOfPlayableMoves.Add((xcords - 2, ycords));
+                }
+                if (!didRightRookMove && !doesTileHaveAChessPiece(xcords + 1,ycords) && !doesTileHaveAChessPiece(xcords + 2, ycords) && isTileSafe(board[xcords + 2, ycords].Name))
+                {
+                    listOfPlayableMoves.Add((xcords + 2, ycords));
+                }
+
+            }
         }
 
         private void blKingMoves(int xcords,int ycords)

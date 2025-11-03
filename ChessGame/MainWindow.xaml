@@ -110,6 +110,8 @@
 
         </Grid>
 
+		<Grid></Grid>
+		
         <Grid Name="PromotionSelection" Background="#AA000000" Visibility="Hidden">
             <Rectangle Fill="#3b2716" Width="650" Height="225"></Rectangle>
             <Rectangle Fill="#b09278" Margin="20px" Width="600" Height="175"></Rectangle>
