@@ -110,7 +110,28 @@
 
         </Grid>
 
-		<Grid></Grid>
+		<Grid Name="OverlayText">
+            <StackPanel Orientation="Vertical" Margin="0,48,0,0">
+                <TextBlock FontSize="48" Foreground="White" Margin="8,15,0,15" Text="{Binding ver8}"/>
+                <TextBlock FontSize="48" Foreground="White" Margin="8,25,0,15" Text="{Binding ver7}"/>
+                <TextBlock FontSize="48" Foreground="White" Margin="8,20,0,15" Text="{Binding ver6}"/>
+                <TextBlock FontSize="48" Foreground="White" Margin="8,20,0,15" Text="{Binding ver5}"/>
+                <TextBlock FontSize="48" Foreground="White" Margin="8,25,0,15" Text="{Binding ver4}"/>
+                <TextBlock FontSize="48" Foreground="White" Margin="8,20,0,15" Text="{Binding ver3}"/>
+                <TextBlock FontSize="48" Foreground="White" Margin="8,20,0,15" Text="{Binding ver2}"/>
+                <TextBlock FontSize="48" Foreground="White" Margin="8,20,0,15" Text="{Binding ver1}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" Margin="75,0,0,0">
+                <TextBlock FontSize="44" Foreground="White" Margin="10,5,0,0" Text="{Binding hor1}"/>
+                <TextBlock FontSize="44" Foreground="White" Margin="80,5,0,0" Text="{Binding hor2}"/>
+                <TextBlock FontSize="44" Foreground="White" Margin="75,5,0,0" Text="{Binding hor3}"/>
+                <TextBlock FontSize="44" Foreground="White" Margin="80,5,0,0" Text="{Binding hor4}"/>
+                <TextBlock FontSize="44" Foreground="White" Margin="75,5,0,0" Text="{Binding hor5}"/>
+                <TextBlock FontSize="44" Foreground="White" Margin="80,5,0,0" Text="{Binding hor6}"/>
+                <TextBlock FontSize="44" Foreground="White" Margin="80,5,0,0" Text="{Binding hor7}"/>
+                <TextBlock FontSize="44" Foreground="White" Margin="80,5,0,0" Text="{Binding hor8}"/>
+            </StackPanel>
+        </Grid>
 		
         <Grid Name="PromotionSelection" Background="#AA000000" Visibility="Hidden">
             <Rectangle Fill="#3b2716" Width="650" Height="225"></Rectangle>
