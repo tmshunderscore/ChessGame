@@ -350,6 +350,7 @@ namespace ChessGame
                 {
                     System.Diagnostics.Debug.WriteLine($"from {board[i, j].Name} to {board[possiblePlay.Item1, possiblePlay.Item2].Name}");
                     playerTurn = turn.whitesTurn;
+                    loadTheBoard();
                     return true;
                 }
                 loadTheBoard();
