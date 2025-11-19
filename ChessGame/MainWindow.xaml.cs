@@ -93,9 +93,9 @@ namespace ChessGame
             this.Loaded += MainWindow_Loaded;
             this.KeyDown += SwitchTurnsManually;
             bindText();
+           // TODO: Implement en passant (later)
         }
         public void MainWindow_Loaded(object sender, RoutedEventArgs e)
-        {
             util = new CGUtil(this);
             movement = new MovementLogic(util, this);
             util.SetMovement(movement);
@@ -104,67 +104,68 @@ namespace ChessGame
             DecideWhoHasWhichColor();
         }
         private void DecideWhoHasWhichColor()
-        {
+        private void selectTile(object sender, MouseButtonEventArgs e)
             switch (isPlayerBlack)
             {
                 case false:
                     myTurn = turn.whitesTurn;
                     break;
-
+                    break;
                 case true:
                     myTurn = turn.blacksTurn;
                     break;
             }
             return;
-        }
+            
         private void SwitchTurnsManually(object sender, KeyEventArgs e)
-        {
+        private void DebugShow(object sender, KeyEventArgs e)
             switch (myTurn)
             {
                 case turn.whitesTurn:
+                                    break;
 
                     myTurn = turn.blacksTurn;
 
-
                     break;
-
+                            break;
                 case turn.blacksTurn:
+                            }
 
                     myTurn = turn.whitesTurn;
-
                     break;
             }
         }
-
+                            break;
+        }
 
         private async Task WaitForOtherPlayersResponse()
         {
             // simulating oponents respond time, also debug purposes
-
             System.Diagnostics.Debug.WriteLine("Waiting for other player's response...");
-
+                                    break;
             await Task.Delay(5000); //instead of this will be a network call to get the other player's 
 
             System.Diagnostics.Debug.WriteLine("Player has played their move...");
-
+                            break;
             playerTurn = myTurn;
-
+                            break;
             //return Task.CompletedTask;
         }
-
+                            }
         private void SendMoveDataToOpponent()
         {
             // here will be the code to send the move data to the opponent over the network
         }
+                            break;
 
         private void MoveChessPiece(object sender, List<(int, int)> listOfPlayableMoves, object previousSender)
         {
-            string desiredPlay = ((TextBlock)sender).Name;
             foreach (var play in listOfPlayableMoves)
             {
                 if (desiredPlay == board[play.Item1, play.Item2].Name)
                 {
                     if (((TextBlock)previousSender).Text == "♔" && util.FindPosition(sender, board).Item1 == util.FindPosition(previousSender, board).Item1 - 2)
+                    {
                     {
                         ((TextBlock)sender).Text = ((TextBlock)previousSender).Text;
                         ((TextBlock)sender).Foreground = ((TextBlock)previousSender).Foreground;
@@ -173,9 +174,9 @@ namespace ChessGame
                         ((TextBlock)FindName(board[3, 0].Name)).Text = "♖";
                         ((TextBlock)FindName(board[3, 0].Name)).Foreground = Brushes.White;
                         util.switchTurns();
-                    }
 
                     else if (((TextBlock)previousSender).Text == "♔" && util.FindPosition(sender, board).Item1 == util.FindPosition(previousSender, board).Item1 + 2)
+                    else if (((TextBlock)previousSender).Text == "♔" && FindPosition(sender, board).Item1 == FindPosition(previousSender, board).Item1 + 2) 
                     {
                         ((TextBlock)sender).Text = ((TextBlock)previousSender).Text;
                         ((TextBlock)sender).Foreground = ((TextBlock)previousSender).Foreground;
@@ -183,10 +184,10 @@ namespace ChessGame
                         ((TextBlock)FindName(board[7, 0].Name)).Text = "";
                         ((TextBlock)FindName(board[5, 0].Name)).Text = "♖";
                         ((TextBlock)FindName(board[5, 0].Name)).Foreground = Brushes.White;
-                    }
 
                     else
                     {
+                    else {
                         ((TextBlock)sender).Text = ((TextBlock)previousSender).Text;
                         ((TextBlock)sender).Foreground = ((TextBlock)previousSender).Foreground;
                         ((TextBlock)previousSender).Text = "";
@@ -194,12 +195,12 @@ namespace ChessGame
                     }
                 }
             }
-
             if (((TextBlock)sender).Text == "♟️" && util.FindPosition(sender, board).Item2 != 1)
             {
                 board[util.FindPosition(previousSender, board).Item1, util.FindPosition(previousSender, board).Item2].didTheFirstMove = false;
                 board[util.FindPosition(sender, board).Item1, util.FindPosition(sender, board).Item2].didTheFirstMove = true;
             }
+        }
 
             if (((TextBlock)sender).Text == "♔" && util.FindPosition(sender, board).Item1 != 4 || ((TextBlock)sender).Text == "♔" && util.FindPosition(sender, board).Item2 != 0)
             {
@@ -210,15 +211,15 @@ namespace ChessGame
             {
                 didLeftRookMove = true;
             }
-
             if (((TextBlock)sender).Text == "♖" && util.FindPosition(previousSender, board).Item1 == 7 && board[util.FindPosition(previousSender, board).Item1, util.FindPosition(previousSender, board).Item2] != board[util.FindPosition(sender, board).Item1, util.FindPosition(sender, board).Item2] && !didRightRookMove)
+        if  (((TextBlock) chessboard.FindName(board[xcords, ycords].Name)).Foreground == Brushes.Black)
             {
                 didRightRookMove = true;
-            }
         }
         private async void selectTile(object sender, MouseButtonEventArgs e)
         {
             if (((TextBlock)sender).Text == "" && phase == selectTileState.select) { return; }
+        }
 
             if (myTurn == playerTurn)
             {
@@ -233,7 +234,6 @@ namespace ChessGame
                             phase = selectTileState.move;
                         }
                         break;
-
 
                     case selectTileState.move:
                         ClearTileColorByPosition(listOfPlayableMoves, currentSender);
@@ -268,6 +268,7 @@ namespace ChessGame
                 }
             }
         }
+        }
 
 
         private int CheckPromotions()
@@ -275,7 +276,6 @@ namespace ChessGame
             for (int i = 0; i < 8; i++)
             {
                 SolidColorBrush temp;
-
                 if (((TextBlock)chessboard.FindName(board[i, 7].Name)).Text == "♟️" && ((TextBlock)chessboard.FindName(board[i, 7].Name)).Foreground == Brushes.White)
                 {
                     return i;
@@ -284,12 +284,12 @@ namespace ChessGame
             return -1;
         }
         private async Task Promote()
-        {
+        private void blVerticalBottomMoves(int xcords, int ycords)
             PromotionSelection.Visibility = Visibility.Visible;
             _inputTaskSource = new TaskCompletionSource<string>();
             string selectedPiece = await _inputTaskSource.Task;
             System.Diagnostics.Debug.WriteLine($"Player selected: {selectedPiece}");
-
+        }
             switch (selectedPiece)
             {
                 case "queen":
@@ -297,7 +297,7 @@ namespace ChessGame
                     break;
                 case "rook":
                     ((TextBlock)chessboard.FindName(board[CheckPromotions(), 7].Name)).Text = "♖";
-                    break;
+                    }
                 case "bishop":
                     ((TextBlock)chessboard.FindName(board[CheckPromotions(), 7].Name)).Text = "♗";
                     break;
@@ -305,7 +305,7 @@ namespace ChessGame
                     ((TextBlock)chessboard.FindName(board[CheckPromotions(), 7].Name)).Text = "♘";
                     break;
             }
-
+                            break;
             if (util.isKingChecked() && !util.doesKingHaveMoves(util.findKingPos().Item1, util.findKingPos().Item2))
             {
                 if (util.isTheGameOver())
@@ -314,7 +314,7 @@ namespace ChessGame
                     System.Windows.Application.Current.Shutdown();
                 }
             }
-
+                            break;
         }
         public async void Promotion(object sender, MouseButtonEventArgs e)
         {
@@ -324,35 +324,36 @@ namespace ChessGame
                 case "♕":
                     var = "queen";
                     break;
-
+        }
                 case "♖":
                     var = "rook";
-                    break;
-
+                    color = "black";
+        }
                 case "♗":
                     var = "bishop";
-                    break;
-
+                    color = "black";
+        }
                 case "♘":
                     var = "knight";
+                    color = "white";
                     break;
-            }
             _inputTaskSource?.TrySetResult(var);
             PromotionSelection.Visibility = Visibility.Hidden;
         }
+            return isKingInCheck;
 
 
         public void ClearTileColorByPosition(List<(int, int)> position, object sender)
         {
             foreach (var moves in listOfPlayableMoves)
-            {
+                
                 ((TextBlock)chessboard.FindName(board[moves.Item1, moves.Item2].Name)).Background = board[moves.Item1, moves.Item2].DefaultColor;
-            }
 
             ((TextBlock)sender).Background = board[util.FindPosition(sender, board).Item1, util.FindPosition(sender, board).Item2].DefaultColor;
+            ((TextBlock)sender).Background = board[FindPosition(sender, board).Item1,FindPosition(sender,board).Item2].DefaultColor;
 
-        }
         public void ColorTileByPosition(List<(int, int)> position)
+        public void ColorTileByPosition( List<(int, int)> position)
         {
 
             for (int j = 0; j < listOfPlayableMoves.Count; j++)
@@ -365,11 +366,11 @@ namespace ChessGame
         {
             return ((TextBlock)chessboard.FindName(name)).Background;
         }
-
-
+        }
         private void bindText()
         {
             DataContext = chessPos;
+        }
 
             switch (isPlayerBlack)
             {
