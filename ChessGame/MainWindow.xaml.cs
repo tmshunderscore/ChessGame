@@ -33,11 +33,34 @@ namespace ChessGame
         turn playerTurn = turn.whitesTurn;
         turn savedTurn;
         object currentSender;
+        ChessPos chessPos = new ChessPos();
+
         bool isKingInCheck = false;
         bool didKingMove = false;
         bool didLeftRookMove = false;
         bool didRightRookMove = false;
-        string PlayersKingColor;
+        bool isPlayerBlack = false;
+
+        public class ChessPos {
+            public string hor1 { get; set; }
+            public string hor2 { get; set; }
+            public string hor3 { get; set; }
+            public string hor4 { get; set; }
+            public string hor5 { get; set; }
+            public string hor6 { get; set; }
+            public string hor7 { get; set; }
+            public string hor8 { get; set; }
+
+            public string ver1 { get; set; }
+            public string ver2 { get; set; }
+            public string ver3 { get; set; }
+            public string ver4 { get; set; }
+            public string ver5 { get; set; }
+            public string ver6 { get; set; }
+            public string ver7 { get; set; }
+            public string ver8 { get; set; }
+        }
+
         enum selectTileState
         {
             select,
@@ -67,10 +90,59 @@ namespace ChessGame
         {
             InitializeComponent();
             this.Loaded += MainWindow_Loaded;
-            this.KeyDown += new KeyEventHandler(DebugShow);
+            
+            bindText();
+            
            // TODO: Implement black inverted chessboard
+           // TODO: Implement en passant (later)
         }
 
+        private void bindText()
+        {
+            DataContext = chessPos;
+
+            switch (isPlayerBlack) {
+                case true:
+                    chessPos.hor1 = "h";
+                    chessPos.hor2 = "g";
+                    chessPos.hor3 = "f";
+                    chessPos.hor4 = "e";
+                    chessPos.hor5 = "d";
+                    chessPos.hor6 = "c";
+                    chessPos.hor7 = "b";
+                    chessPos.hor8 = "a";
+
+                    chessPos.ver1 = "8";
+                    chessPos.ver2 = "7";
+                    chessPos.ver3 = "6";
+                    chessPos.ver4 = "5";
+                    chessPos.ver5 = "4";
+                    chessPos.ver6 = "3";
+                    chessPos.ver7 = "2";
+                    chessPos.ver8 = "1";
+                    break;
+                    case false:
+                    chessPos.hor1 = "a";
+                    chessPos.hor2 = "b";
+                    chessPos.hor3 = "c";
+                    chessPos.hor4 = "d";
+                    chessPos.hor5 = "e";
+                    chessPos.hor6 = "f";
+                    chessPos.hor7 = "g";
+                    chessPos.hor8 = "h";
+
+                    chessPos.ver1 = "1";
+                    chessPos.ver2 = "2";
+                    chessPos.ver3 = "3";
+                    chessPos.ver4 = "4";
+                    chessPos.ver5 = "5";
+                    chessPos.ver6 = "6";
+                    chessPos.ver7 = "7";
+                    chessPos.ver8 = "8";
+                    break;
+            }
+
+        }
         private void selectTile(object sender, MouseButtonEventArgs e)
         {
 
