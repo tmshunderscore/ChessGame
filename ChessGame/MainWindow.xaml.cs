@@ -27,7 +27,6 @@ namespace ChessGame
         List<(int,int)> listOfPlayableMoves = new List<(int,int)>();
         List<(int,int)> listOfDangerousMoves = new List<(int,int)>();
         TaskCompletionSource<string> _inputTaskSource;
-        List<Action> listOfCommands = new List<Action>();
         String boardRow;
         selectTileState phase = selectTileState.select;
         turn playerTurn = turn.whitesTurn;
@@ -90,7 +89,8 @@ namespace ChessGame
         {
             InitializeComponent();
             this.Loaded += MainWindow_Loaded;
-            
+            this.KeyDown += SwitchTurnsManually;
+
             bindText();
             
            // TODO: Implement black inverted chessboard
@@ -270,11 +270,11 @@ namespace ChessGame
         }
 
 
-        private void DebugShow(object sender, KeyEventArgs e)
+        private void SwitchTurnsManually(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.NumPad1) {
-                loadTheBoard();
-                }
+            if (e.Key == Key.K) {
+                switchTurns();
+            }
 
         }
 
@@ -350,6 +350,7 @@ namespace ChessGame
                 {
                     System.Diagnostics.Debug.WriteLine($"from {board[i, j].Name} to {board[possiblePlay.Item1, possiblePlay.Item2].Name}");
                     playerTurn = turn.whitesTurn;
+                    loadTheBoard();
                     return true;
                 }
                 loadTheBoard();
