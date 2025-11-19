@@ -95,7 +95,6 @@ namespace ChessGame
 
             bindText();
 
-            // TODO: Implement black inverted chessboard
             // TODO: Implement en passant (later)
         }
 
@@ -150,11 +149,16 @@ namespace ChessGame
         {
             // simulating oponents respond time, also debug purposes
             System.Diagnostics.Debug.WriteLine("Waiting for other player's response...");
-            await Task.Delay(5000);
+            await Task.Delay(5000); //instead of this will be a network call to get the other player's move
             System.Diagnostics.Debug.WriteLine("Player has played their move...");
             playerTurn = myTurn;
             //return Task.CompletedTask;
         }
+
+        private void SendMoveDataToOpponent() {
+            // here will be the code to send the move data to the opponent over the network
+        }
+
         private async void selectTile(object sender, MouseButtonEventArgs e)
         {
             if (myTurn == playerTurn)
@@ -211,7 +215,7 @@ namespace ChessGame
                                 System.Windows.Application.Current.Shutdown();
                             }
                         }
-
+                        SendMoveDataToOpponent();
                         await WaitForOtherPlayersResponse();
                         break;
 
