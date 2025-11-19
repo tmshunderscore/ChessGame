@@ -30,6 +30,7 @@ namespace ChessGame
         String boardRow;
         selectTileState phase = selectTileState.select;
         turn playerTurn = turn.whitesTurn;
+        turn myTurn;
         turn savedTurn;
         object currentSender;
         ChessPos chessPos = new ChessPos();
@@ -152,7 +153,7 @@ namespace ChessGame
             {
 
                 case selectTileState.select:
-                    if (((TextBlock)sender).Foreground == Brushes.White && playerTurn == turn.whitesTurn || ((TextBlock)sender).Foreground == Brushes.Black && playerTurn == turn.blacksTurn)
+                    if (((TextBlock)sender).Foreground == Brushes.White && playerTurn == turn.whitesTurn && myTurn == turn.whitesTurn || ((TextBlock)sender).Foreground == Brushes.Black && playerTurn == turn.blacksTurn && myTurn == turn.blacksTurn)
                     {
 
 
@@ -273,7 +274,16 @@ namespace ChessGame
         private void SwitchTurnsManually(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.K) {
-                switchTurns();
+                switch (myTurn)
+                {
+                    case turn.whitesTurn:
+                        myTurn = turn.blacksTurn;
+                        break;
+
+                    case turn.blacksTurn:
+                        myTurn = turn.whitesTurn;
+                        break;
+                }
             }
 
         }
@@ -282,6 +292,14 @@ namespace ChessGame
         {
             AssignNamesToBoardTiles();
             isKingChecked();
+            DecideWhoHasWhichColor();
+        }
+
+        private void DecideWhoHasWhichColor()
+        {
+            myTurn = turn.whitesTurn;
+            return;
+            myTurn = turn.blacksTurn;
         }
 
         private void saveTheBoard()
@@ -368,7 +386,7 @@ namespace ChessGame
                     switch (((TextBlock)chessboard.FindName(board[i, j].Name)).Text)
                     {
                         case "♟️":
-                            switch (playerTurn)
+                            switch (myTurn)
                             {
                                 case turn.whitesTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "white")
@@ -384,7 +402,7 @@ namespace ChessGame
                             break;
 
                         case "♘":
-                            switch (playerTurn)
+                            switch (myTurn)
                             {
                                 case turn.whitesTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "white")
@@ -402,7 +420,7 @@ namespace ChessGame
                             break;
 
                         case "♗":
-                            switch (playerTurn)
+                            switch (myTurn)
                             {
                                 case turn.whitesTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "white")
@@ -421,7 +439,7 @@ namespace ChessGame
                             break;
 
                         case "♖":
-                            switch (playerTurn)
+                            switch (myTurn)
                             {
                                 case turn.whitesTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "white")
@@ -439,7 +457,7 @@ namespace ChessGame
                             break;
 
                         case "♕":
-                            switch (playerTurn)
+                            switch (myTurn)
                             {
                                 case turn.whitesTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "white")
@@ -456,7 +474,7 @@ namespace ChessGame
                             }
                             break;
                         case "♔":
-                            switch (playerTurn)
+                            switch (myTurn)
                             {
                                 case turn.whitesTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "white")
@@ -488,7 +506,7 @@ namespace ChessGame
                     switch (((TextBlock)chessboard.FindName(board[i, j].Name)).Text)
                     {
                         case "♟️":
-                            switch (playerTurn)
+                            switch (myTurn)
                             {
                                 case turn.whitesTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "white")
@@ -504,7 +522,7 @@ namespace ChessGame
                             break;
 
                         case "♘":
-                            switch (playerTurn)
+                            switch (myTurn)
                             {
                                 case turn.whitesTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "white")
@@ -522,7 +540,7 @@ namespace ChessGame
                             break;
 
                         case "♗":
-                            switch (playerTurn)
+                            switch (myTurn)
                             {
                                 case turn.whitesTurn:
                                     if(isAChessPieceBlackOrWhite(i, j) == "white") {
@@ -540,7 +558,7 @@ namespace ChessGame
                             break;
 
                         case "♖":
-                            switch (playerTurn)
+                            switch (myTurn)
                             {
                                 case turn.whitesTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "white")
@@ -558,7 +576,7 @@ namespace ChessGame
                             break;
 
                         case "♕":
-                            switch (playerTurn)
+                            switch (myTurn)
                             {
                                 case turn.whitesTurn:
                                         if (isAChessPieceBlackOrWhite(i, j) == "white")
@@ -575,7 +593,7 @@ namespace ChessGame
                             }
                             break;
                         case "♔":
-                            switch (playerTurn)
+                            switch (myTurn)
                             {
                                 case turn.whitesTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "white")
@@ -971,7 +989,7 @@ namespace ChessGame
 
                 // pawn moveset
                 case "♟️":
-                    switch (playerTurn)
+                    switch (myTurn)
                     {
                         case turn.whitesTurn:
                             return whPawnMoveswSender(sender,xcords,ycords);
@@ -986,7 +1004,7 @@ namespace ChessGame
                 
                 // knight moveset
                 case "♘":
-                    switch (playerTurn)
+                    switch (myTurn)
                     {
                         case turn.whitesTurn:
                             whKnightMoves(xcords, ycords);
@@ -1000,7 +1018,7 @@ namespace ChessGame
 
                 // bishop moveset
                 case "♗":
-                    switch (playerTurn)
+                    switch (myTurn)
                     {
                         case turn.whitesTurn:
                             whBishopMoves(xcords, ycords);
@@ -1015,7 +1033,7 @@ namespace ChessGame
 
                 // rook moveset
                 case "♖":
-                    switch (playerTurn)
+                    switch (myTurn)
                     {
                         case turn.whitesTurn:
                             whRookMoves(xcords, ycords);
@@ -1029,7 +1047,7 @@ namespace ChessGame
 
                 // queen moveset
                 case "♕":
-                    switch (playerTurn)
+                    switch (myTurn)
                     {
                         case turn.whitesTurn:
                             whQueenMoves(xcords, ycords);
@@ -1044,7 +1062,7 @@ namespace ChessGame
 
                 // king moveset
                 case "♔":
-                    switch (playerTurn)
+                    switch (myTurn)
                     {
                         case turn.whitesTurn:
                             whKingMoves(xcords, ycords);
@@ -1096,7 +1114,7 @@ namespace ChessGame
                     switch (((TextBlock)chessboard.FindName(board[i, j].Name)).Text)
                     {
                         case "♟️":
-                            switch (playerTurn)
+                            switch (myTurn)
                             {
                                 case turn.whitesTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "black")
@@ -1119,7 +1137,7 @@ namespace ChessGame
                             break;
 
                         case "♘":
-                            switch (playerTurn)
+                            switch (myTurn)
                             {
                                 case turn.whitesTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "black")
@@ -1137,7 +1155,7 @@ namespace ChessGame
                             break;
 
                         case "♗":
-                            switch (playerTurn)
+                            switch (myTurn)
                             {
                                 case turn.whitesTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "black")
@@ -1162,7 +1180,7 @@ namespace ChessGame
                             break;
 
                         case "♖":
-                            switch (playerTurn)
+                            switch (myTurn)
                             {
                                 case turn.whitesTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "black")
@@ -1186,7 +1204,7 @@ namespace ChessGame
                             break;
 
                         case "♕":
-                            switch (playerTurn)
+                            switch (myTurn)
                             {
                                 case turn.whitesTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "black")
@@ -1225,7 +1243,7 @@ namespace ChessGame
         private string findKing()
         {
             string color = null;
-            switch(playerTurn){
+            switch(myTurn){
                 case turn.whitesTurn:
                     color = "white";
                 break;
@@ -1250,7 +1268,7 @@ namespace ChessGame
         private (int,int) findKingPos()
         {
             string color = null;
-            switch (playerTurn)
+            switch (myTurn)
             {
                 case turn.whitesTurn:
                     color = "white";
@@ -1275,7 +1293,7 @@ namespace ChessGame
         private bool doesKingHaveMoves(int xcords, int ycords)
         {
             string color = null;
-            switch (playerTurn)
+            switch (myTurn)
             {
                 case turn.whitesTurn:
                     color = "black";
@@ -1710,7 +1728,7 @@ namespace ChessGame
         public void whKingMoves(int xcords,int ycords)
         {
             string color = null;
-            switch (playerTurn)
+            switch (myTurn)
             {
                 case turn.whitesTurn:
                     color = "black";
@@ -1746,7 +1764,7 @@ namespace ChessGame
         private void blKingMoves(int xcords,int ycords)
         {
             string color = null;
-            switch (playerTurn)
+            switch (myTurn)
             {
                 case turn.whitesTurn:
                     color = "black";
