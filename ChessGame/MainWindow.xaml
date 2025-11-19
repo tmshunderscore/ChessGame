@@ -110,7 +110,7 @@
 
         </Grid>
 
-		<Grid Name="OverlayText">
+		<Grid Name="OverlayText" IsHitTestVisible="False" Background="Transparent">
             <StackPanel Orientation="Vertical" Margin="0,48,0,0">
                 <TextBlock FontSize="48" Foreground="White" Margin="8,15,0,15" Text="{Binding ver8}"/>
                 <TextBlock FontSize="48" Foreground="White" Margin="8,25,0,15" Text="{Binding ver7}"/>
