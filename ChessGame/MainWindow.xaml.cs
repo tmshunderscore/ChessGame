@@ -39,6 +39,7 @@ namespace ChessGame
         CGUtil util;
         MovementLogic movement;
         ChessPos chessPos = new ChessPos();
+        
 
         enum selectTileState
         {
@@ -119,20 +120,33 @@ namespace ChessGame
         }
         private void SwitchTurnsManually(object sender, KeyEventArgs e)
         {
-            switch (myTurn)
+            if(Key.NumPad1 == e.Key)
             {
-                case turn.whitesTurn:
+                switch (myTurn)
+                {
+                    case turn.whitesTurn:
 
-                    myTurn = turn.blacksTurn;
+                        myTurn = turn.blacksTurn;
 
 
-                    break;
+                     break;
 
-                case turn.blacksTurn:
+                   case turn.blacksTurn:
 
-                    myTurn = turn.whitesTurn;
+                      myTurn = turn.whitesTurn;
 
-                    break;
+                     break;
+                }
+            }
+
+            if(Key.NumPad2 == e.Key)
+            {
+                TCPServer tcpServer = new TCPServer();
+            }
+
+            if (Key.NumPad3 == e.Key)
+            {
+                TCPClient tcpClient = new TCPClient();
             }
         }
 
