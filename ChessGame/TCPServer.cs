@@ -13,15 +13,29 @@ namespace ChessGame
         public TCPServer()
         {
             System.Diagnostics.Debug.WriteLine("TCPServer initialized");
+            Task.Run(StartUDPBroadcast);
             Task.Run(InitializeServer);
         }
 
+        private async Task StartUDPBroadcast()
+        {
+            using var udp = new UdpClient();
+            udp.EnableBroadcast = true;
+            var data = Encoding.UTF8.GetBytes("CLIENTFOUND");
+            var endpoint = new IPEndPoint(IPAddress.Broadcast, 11001);
+
+            while (true)
+            {
+                await udp.SendAsync(data, data.Length, endpoint);
+                await Task.Delay(1000);
+            }
+        }
 
         private async Task InitializeServer()
         {
             var eom = "<EOM>";
             IPHostEntry ipHostInfo = await Dns.GetHostEntryAsync(Dns.GetHostName());
-            IPAddress localIpAddress = IPAddress.Loopback;
+            IPAddress localIpAddress = IPAddress.Any;
             IPEndPoint ipEndPoint = new(localIpAddress, 11_000);
 
             using Socket listener = new(
