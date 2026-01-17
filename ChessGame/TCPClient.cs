@@ -11,6 +11,7 @@ namespace ChessGame
 {
     internal class TCPClient
     {
+        private Socket? client;
         public TCPClient() {
             System.Diagnostics.Debug.WriteLine("TCPClient initialized");
             Task.Run(InitializeClient);
@@ -32,22 +33,45 @@ namespace ChessGame
             }
         }
 
+        public async Task SendMessage(string input)
+        {
+            var eom = "<EOM>";
+            var message = input+eom;
+                var messageBytes = Encoding.UTF8.GetBytes(message); 
+                _ = await client.SendAsync(messageBytes, SocketFlags.None);
+                message = message.Replace(eom, "");
+            //System.Diagnostics.Debug.WriteLine("Sent:" + message);
+        }
+
         public async Task InitializeClient()
         {
             IPAddress serverIP = GetServerIP();
-            var eom = "<EOM>";
             IPEndPoint ipEndPoint = new(serverIP, 11_000);
 
-            using Socket client = new(
+            client = new Socket(
                 ipEndPoint.AddressFamily,
                 SocketType.Stream,
                 ProtocolType.Tcp);
             await client.ConnectAsync(ipEndPoint);
-                var message = "If you see this I'm the best programmer that has ever lived"+eom;
-                var messageBytes = Encoding.UTF8.GetBytes(message);
-                _ = await client.SendAsync(messageBytes, SocketFlags.None);
-                message = message.Replace(eom, "");
-            System.Diagnostics.Debug.WriteLine("Sent: " + message);
+            StartListening();
         }
+
+        private async Task StartListening() 
+        { 
+            while (true)
+            {
+                var eom = "<EOM>";
+                var buffer = new byte[1024];
+                var recieved = await client.ReceiveAsync(buffer, SocketFlags.None);
+                var response = Encoding.UTF8.GetString(buffer, 0, recieved);
+                if (response.IndexOf(eom) > -1)
+                {
+                    response = response.Replace(eom, "");
+                    System.Diagnostics.Debug.WriteLine("SERVER -> CLIENT:" + response);
+                    response = null;
+                }
+            }
+        }
+
     }
 }

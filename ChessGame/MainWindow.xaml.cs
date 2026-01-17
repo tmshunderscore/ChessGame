@@ -39,7 +39,9 @@ namespace ChessGame
         CGUtil util;
         MovementLogic movement;
         ChessPos chessPos = new ChessPos();
-        
+        TCPServer tcpServer;
+        TCPClient tcpClient;
+
 
         enum selectTileState
         {
@@ -97,6 +99,8 @@ namespace ChessGame
         }
         public void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            tcpClient = new TCPClient();
+            tcpServer = new TCPServer();
             util = new CGUtil(this);
             movement = new MovementLogic(util, this);
             util.SetMovement(movement);
@@ -166,9 +170,9 @@ namespace ChessGame
             //return Task.CompletedTask;
         }
 
-        private void SendMoveDataToOpponent()
+        private void SendMoveDataToOpponent(String message)
         {
-            // here will be the code to send the move data to the opponent over the network
+            tcpServer.SendMessage(message);
         }
 
         private void MoveChessPiece(object sender, List<(int, int)> listOfPlayableMoves, object previousSender)
@@ -231,7 +235,7 @@ namespace ChessGame
             }
         }
         private async void selectTile(object sender, MouseButtonEventArgs e)
-        {
+        { 
             if (((TextBlock)sender).Text == "" && phase == selectTileState.select) { return; }
 
             if (myTurn == playerTurn)
@@ -275,7 +279,7 @@ namespace ChessGame
                         }
                         if (((TextBlock)currentSender).Name != ((TextBlock)sender).Name)
                         {
-                            SendMoveDataToOpponent();
+                            SendMoveDataToOpponent(((TextBlock)currentSender).Name + ((TextBlock)sender).Name);
                             await WaitForOtherPlayersResponse();
                         }
                         break;
