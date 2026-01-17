@@ -5,22 +5,22 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
-using static ChessGame.MainWindow;
+using static ChessGame.Multiplayer;
 
 namespace ChessGame
 {
     internal class CGUtil
     {
-        public readonly MainWindow _main;
+        public readonly Multiplayer _multiplayer;
         public MovementLogic _movement;
         public Save[,] safeBoard = new Save[8, 8];
         public String boardRow;
         public bool isKingInCheck = false;
 
         // Constructor and setup
-        public CGUtil(MainWindow main)
+        public CGUtil(Multiplayer main)
         {
-            _main = main;
+            _multiplayer = main;
         }
         public void SetMovement(MovementLogic movement)
         {
@@ -69,10 +69,10 @@ namespace ChessGame
 
                 for (int j = 0; j <= 7; j++)
                 {
-                    _main.board[i, j] = new Tile();
-                    _main.board[i, j].Name = boardRow + (j + 1);
-                    _main.board[i, j].DefaultColor = _main.getTileColorByName(_main.board[i, j].Name);
-                    _main.board[i, j].didTheFirstMove = false;
+                    _multiplayer.board[i, j] = new Tile();
+                    _multiplayer.board[i, j].Name = boardRow + (j + 1);
+                    _multiplayer.board[i, j].DefaultColor = _multiplayer.getTileColorByName(_multiplayer.board[i, j].Name);
+                    _multiplayer.board[i, j].didTheFirstMove = false;
                 }
 
             }
@@ -86,10 +86,10 @@ namespace ChessGame
             {
                 for (int j = 0; j <= 7; j++)
                 {
-                    switch (((TextBlock)_main.chessboard.FindName(_main.board[i, j].Name)).Text)
+                    switch (((TextBlock)_multiplayer.chessboard.FindName(_multiplayer.board[i, j].Name)).Text)
                     {
                         case "♟️":
-                            switch (_main.playerTurn)
+                            switch (_multiplayer.playerTurn)
                             {
                                 case turn.whitesTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "white")
@@ -106,7 +106,7 @@ namespace ChessGame
                             break;
 
                         case "♘":
-                            switch (_main.playerTurn)
+                            switch (_multiplayer.playerTurn)
                             {
                                 case turn.whitesTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "white")
@@ -124,7 +124,7 @@ namespace ChessGame
                             break;
 
                         case "♗":
-                            switch (_main.playerTurn)
+                            switch (_multiplayer.playerTurn)
                             {
                                 case turn.whitesTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "white")
@@ -143,7 +143,7 @@ namespace ChessGame
                             break;
 
                         case "♖":
-                            switch (_main.playerTurn)
+                            switch (_multiplayer.playerTurn)
                             {
                                 case turn.whitesTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "white")
@@ -161,7 +161,7 @@ namespace ChessGame
                             break;
 
                         case "♕":
-                            switch (_main.playerTurn)
+                            switch (_multiplayer.playerTurn)
                             {
                                 case turn.whitesTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "white")
@@ -178,7 +178,7 @@ namespace ChessGame
                             }
                             break;
                         case "♔":
-                            switch (_main.playerTurn)
+                            switch (_multiplayer.playerTurn)
                             {
                                 case turn.whitesTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "white")
@@ -206,10 +206,10 @@ namespace ChessGame
             {
                 for (int j = 0; j <= 7; j++)
                 {
-                    switch (((TextBlock)_main.chessboard.FindName(_main.board[i, j].Name)).Text)
+                    switch (((TextBlock)_multiplayer.chessboard.FindName(_multiplayer.board[i, j].Name)).Text)
                     {
                         case "♟️":
-                            switch (_main.playerTurn)
+                            switch (_multiplayer.playerTurn)
                             {
                                 case turn.whitesTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "white")
@@ -225,7 +225,7 @@ namespace ChessGame
                             break;
 
                         case "♘":
-                            switch (_main.playerTurn)
+                            switch (_multiplayer.playerTurn)
                             {
                                 case turn.whitesTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "white")
@@ -243,7 +243,7 @@ namespace ChessGame
                             break;
 
                         case "♗":
-                            switch (_main.playerTurn)
+                            switch (_multiplayer.playerTurn)
                             {
                                 case turn.whitesTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "white")
@@ -262,7 +262,7 @@ namespace ChessGame
                             break;
 
                         case "♖":
-                            switch (_main.playerTurn)
+                            switch (_multiplayer.playerTurn)
                             {
                                 case turn.whitesTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "white")
@@ -280,7 +280,7 @@ namespace ChessGame
                             break;
 
                         case "♕":
-                            switch (_main.playerTurn)
+                            switch (_multiplayer.playerTurn)
                             {
                                 case turn.whitesTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "white")
@@ -297,7 +297,7 @@ namespace ChessGame
                             }
                             break;
                         case "♔":
-                            switch (_main.playerTurn)
+                            switch (_multiplayer.playerTurn)
                             {
                                 case turn.whitesTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "white")
@@ -335,16 +335,16 @@ namespace ChessGame
         public bool doesTileHaveAChessPiece(int xcords, int ycords)
         {
             if (!isInBoundsY(ycords)) { return false; }
-            if (((TextBlock)_main.chessboard.FindName(_main.board[xcords, ycords].Name)).Text != "") { return true; }
+            if (((TextBlock)_multiplayer.chessboard.FindName(_multiplayer.board[xcords, ycords].Name)).Text != "") { return true; }
             return false;
         }
         public string isAChessPieceBlackOrWhite(int xcords, int ycords)
         {
-            if (((TextBlock)_main.chessboard.FindName(_main.board[xcords, ycords].Name)).Foreground == Brushes.Black)
+            if (((TextBlock)_multiplayer.chessboard.FindName(_multiplayer.board[xcords, ycords].Name)).Foreground == Brushes.Black)
             {
                 return "black";
             }
-            if (((TextBlock)_main.chessboard.FindName(_main.board[xcords, ycords].Name)).Foreground == Brushes.White)
+            if (((TextBlock)_multiplayer.chessboard.FindName(_multiplayer.board[xcords, ycords].Name)).Foreground == Brushes.White)
             {
                 return "white";
             }
@@ -355,9 +355,9 @@ namespace ChessGame
         {
             // check if move puts king in check => move illegal
             saveTheBoard();
-            ((TextBlock)_main.chessboard.FindName(_main.board[destxcords, destycords].Name)).Text = ((TextBlock)_main.chessboard.FindName(_main.board[srcxcords, srcycords].Name)).Text;
-            ((TextBlock)_main.chessboard.FindName(_main.board[srcxcords, srcycords].Name)).Text = "";
-            ((TextBlock)_main.chessboard.FindName(_main.board[destxcords, destycords].Name)).Foreground = ((TextBlock)_main.chessboard.FindName(_main.board[srcxcords, srcycords].Name)).Foreground;
+            ((TextBlock)_multiplayer.chessboard.FindName(_multiplayer.board[destxcords, destycords].Name)).Text = ((TextBlock)_multiplayer.chessboard.FindName(_multiplayer.board[srcxcords, srcycords].Name)).Text;
+            ((TextBlock)_multiplayer.chessboard.FindName(_multiplayer.board[srcxcords, srcycords].Name)).Text = "";
+            ((TextBlock)_multiplayer.chessboard.FindName(_multiplayer.board[destxcords, destycords].Name)).Foreground = ((TextBlock)_multiplayer.chessboard.FindName(_multiplayer.board[srcxcords, srcycords].Name)).Foreground;
             if (!isKingChecked()) { addMove(); loadTheBoard(); return; }
             loadTheBoard();
             return;
@@ -389,9 +389,9 @@ namespace ChessGame
                 for (int j = 0; j <= 7; j++)
                 {
                     safeBoard[i, j] = new Save();
-                    safeBoard[i, j].value = ((TextBlock)_main.chessboard.FindName(_main.board[i, j].Name)).Text;
-                    safeBoard[i, j].color = ((TextBlock)_main.chessboard.FindName(_main.board[i, j].Name)).Foreground;
-                    _main.savedTurn = _main.playerTurn;
+                    safeBoard[i, j].value = ((TextBlock)_multiplayer.chessboard.FindName(_multiplayer.board[i, j].Name)).Text;
+                    safeBoard[i, j].color = ((TextBlock)_multiplayer.chessboard.FindName(_multiplayer.board[i, j].Name)).Foreground;
+                    _multiplayer.savedTurn = _multiplayer.playerTurn;
                 }
             }
         }
@@ -401,61 +401,61 @@ namespace ChessGame
             {
                 for (int j = 0; j <= 7; j++)
                 {
-                    ((TextBlock)_main.chessboard.FindName(_main.board[i, j].Name)).Text = safeBoard[i, j].value;
-                    ((TextBlock)_main.chessboard.FindName(_main.board[i, j].Name)).Foreground = safeBoard[i, j].color;
-                    _main.playerTurn = _main.savedTurn;
+                    ((TextBlock)_multiplayer.chessboard.FindName(_multiplayer.board[i, j].Name)).Text = safeBoard[i, j].value;
+                    ((TextBlock)_multiplayer.chessboard.FindName(_multiplayer.board[i, j].Name)).Foreground = safeBoard[i, j].color;
+                    _multiplayer.playerTurn = _multiplayer.savedTurn;
                 }
             }
         }
         public void switchTurns()
         {
-            if (_main.playerTurn == turn.whitesTurn)
+            if (_multiplayer.playerTurn == turn.whitesTurn)
             {
-                _main.playerTurn = turn.blacksTurn;
+                _multiplayer.playerTurn = turn.blacksTurn;
             }
-            else if (_main.playerTurn == turn.blacksTurn)
+            else if (_multiplayer.playerTurn == turn.blacksTurn)
             {
-                _main.playerTurn = turn.whitesTurn;
+                _multiplayer.playerTurn = turn.whitesTurn;
             }
-            System.Diagnostics.Debug.WriteLine(_main.playerTurn);
+            System.Diagnostics.Debug.WriteLine(_multiplayer.playerTurn);
         }
 
         // Dangerous tiles and check detection
         public void findAllDangerousTiles()
         {
-            _main.listOfDangerousMoves.Clear();
+            _multiplayer.listOfDangerousMoves.Clear();
             var temp = findKingPos();
-            ((TextBlock)_main.chessboard.FindName(_main.board[temp.Item1, temp.Item2].Name)).Text = "";
+            ((TextBlock)_multiplayer.chessboard.FindName(_multiplayer.board[temp.Item1, temp.Item2].Name)).Text = "";
 
             for (int i = 0; i <= 7; i++)
             {
                 for (int j = 0; j <= 7; j++)
                 {
-                    switch (((TextBlock)_main.chessboard.FindName(_main.board[i, j].Name)).Text)
+                    switch (((TextBlock)_multiplayer.chessboard.FindName(_multiplayer.board[i, j].Name)).Text)
                     {
                         case "♟️":
-                            switch (_main.playerTurn)
+                            switch (_multiplayer.playerTurn)
                             {
                                 case turn.whitesTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "black")
                                     {
-                                        if (isInBoundsX(i + 1) && isInBoundsY(j - 1)) { _main.listOfDangerousMoves.Add((i + 1, j - 1)); }
-                                        if (isInBoundsX(i - 1) && isInBoundsY(j - 1)) { _main.listOfDangerousMoves.Add((i - 1, j - 1)); }
+                                        if (isInBoundsX(i + 1) && isInBoundsY(j - 1)) { _multiplayer.listOfDangerousMoves.Add((i + 1, j - 1)); }
+                                        if (isInBoundsX(i - 1) && isInBoundsY(j - 1)) { _multiplayer.listOfDangerousMoves.Add((i - 1, j - 1)); }
                                     }
                                     break;
 
                                 case turn.blacksTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "white")
                                     {
-                                        if (isInBoundsX(i + 1) && isInBoundsY(j + 1)) { _main.listOfDangerousMoves.Add((i + 1, j + 1)); }
-                                        if (isInBoundsX(i - 1) && isInBoundsY(j + 1)) { _main.listOfDangerousMoves.Add((i - 1, j + 1)); }
+                                        if (isInBoundsX(i + 1) && isInBoundsY(j + 1)) { _multiplayer.listOfDangerousMoves.Add((i + 1, j + 1)); }
+                                        if (isInBoundsX(i - 1) && isInBoundsY(j + 1)) { _multiplayer.listOfDangerousMoves.Add((i - 1, j + 1)); }
                                     }
                                     break;
                             }
                             break;
 
                         case "♘":
-                            switch (_main.playerTurn)
+                            switch (_multiplayer.playerTurn)
                             {
                                 case turn.whitesTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "black")
@@ -473,7 +473,7 @@ namespace ChessGame
                             break;
 
                         case "♗":
-                            switch (_main.playerTurn)
+                            switch (_multiplayer.playerTurn)
                             {
                                 case turn.whitesTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "black")
@@ -498,7 +498,7 @@ namespace ChessGame
                             break;
 
                         case "♖":
-                            switch (_main.playerTurn)
+                            switch (_multiplayer.playerTurn)
                             {
                                 case turn.whitesTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "black")
@@ -522,7 +522,7 @@ namespace ChessGame
                             break;
 
                         case "♕":
-                            switch (_main.playerTurn)
+                            switch (_multiplayer.playerTurn)
                             {
                                 case turn.whitesTurn:
                                     if (isAChessPieceBlackOrWhite(i, j) == "black")
@@ -555,13 +555,13 @@ namespace ChessGame
                     }
                 }
             }
-            ((TextBlock)_main.chessboard.FindName(_main.board[temp.Item1, temp.Item2].Name)).Text = "♔";
+            ((TextBlock)_multiplayer.chessboard.FindName(_multiplayer.board[temp.Item1, temp.Item2].Name)).Text = "♔";
         }
         public bool isTileSafe(string selectedTile)
         {
-            foreach (var tile in _main.listOfDangerousMoves)
+            foreach (var tile in _multiplayer.listOfDangerousMoves)
             {
-                if (_main.board[tile.Item1, tile.Item2].Name == selectedTile)
+                if (_multiplayer.board[tile.Item1, tile.Item2].Name == selectedTile)
                 {
                     return false;
                 }
@@ -573,11 +573,11 @@ namespace ChessGame
         public bool CalculateAmountOfMoves(Action specialcommand, int i, int j)
         {
             saveTheBoard();
-            _main.listOfPlayableMoves.Clear();
+            _multiplayer.listOfPlayableMoves.Clear();
             specialcommand();
 
 
-            if (_main.listOfPlayableMoves.Count == 0)
+            if (_multiplayer.listOfPlayableMoves.Count == 0)
             {
                 return false;
             }
@@ -587,24 +587,24 @@ namespace ChessGame
         public bool CalculateMoves(Action specialcommand, int i, int j)
         {
             saveTheBoard();
-            _main.listOfPlayableMoves.Clear();
+            _multiplayer.listOfPlayableMoves.Clear();
             specialcommand();
 
-            foreach (var pospla in _main.listOfPlayableMoves)
+            foreach (var pospla in _multiplayer.listOfPlayableMoves)
             {
-                System.Diagnostics.Debug.WriteLine(_main.board[pospla.Item1, pospla.Item2].Name);
+                System.Diagnostics.Debug.WriteLine(_multiplayer.board[pospla.Item1, pospla.Item2].Name);
             }
             saveTheBoard();
 
-            foreach (var possiblePlay in _main.listOfPlayableMoves)
+            foreach (var possiblePlay in _multiplayer.listOfPlayableMoves)
             {
-                ((TextBlock)_main.chessboard.FindName(_main.board[possiblePlay.Item1, possiblePlay.Item2].Name)).Text = ((TextBlock)_main.chessboard.FindName(_main.board[i, j].Name)).Text;
-                ((TextBlock)_main.chessboard.FindName(_main.board[possiblePlay.Item1, possiblePlay.Item2].Name)).Foreground = ((TextBlock)_main.chessboard.FindName(_main.board[i, j].Name)).Foreground;
-                ((TextBlock)_main.chessboard.FindName(_main.board[i, j].Name)).Text = "";
+                ((TextBlock)_multiplayer.chessboard.FindName(_multiplayer.board[possiblePlay.Item1, possiblePlay.Item2].Name)).Text = ((TextBlock)_multiplayer.chessboard.FindName(_multiplayer.board[i, j].Name)).Text;
+                ((TextBlock)_multiplayer.chessboard.FindName(_multiplayer.board[possiblePlay.Item1, possiblePlay.Item2].Name)).Foreground = ((TextBlock)_multiplayer.chessboard.FindName(_multiplayer.board[i, j].Name)).Foreground;
+                ((TextBlock)_multiplayer.chessboard.FindName(_multiplayer.board[i, j].Name)).Text = "";
                 if (!isKingChecked())
                 {
-                    System.Diagnostics.Debug.WriteLine($"from {_main.board[i, j].Name} to {_main.board[possiblePlay.Item1, possiblePlay.Item2].Name}");
-                    _main.playerTurn = turn.whitesTurn;
+                    System.Diagnostics.Debug.WriteLine($"from {_multiplayer.board[i, j].Name} to {_multiplayer.board[possiblePlay.Item1, possiblePlay.Item2].Name}");
+                    _multiplayer.playerTurn = turn.whitesTurn;
                     loadTheBoard();
                     return true;
                 }
@@ -618,7 +618,7 @@ namespace ChessGame
         public string findKing()
         {
             string color = null;
-            switch (_main.playerTurn)
+            switch (_multiplayer.playerTurn)
             {
                 case turn.whitesTurn:
                     color = "white";
@@ -632,9 +632,9 @@ namespace ChessGame
             {
                 for (int j = 0; j < 8; j++)
                 {
-                    if (((TextBlock)_main.chessboard.FindName(_main.board[i, j].Name)).Text == "♔" && isAChessPieceBlackOrWhite(i, j) == color)
+                    if (((TextBlock)_multiplayer.chessboard.FindName(_multiplayer.board[i, j].Name)).Text == "♔" && isAChessPieceBlackOrWhite(i, j) == color)
                     {
-                        return _main.board[i, j].Name;
+                        return _multiplayer.board[i, j].Name;
                     }
                 }
             }
@@ -643,7 +643,7 @@ namespace ChessGame
         public (int, int) findKingPos()
         {
             string color = null;
-            switch (_main.playerTurn)
+            switch (_multiplayer.playerTurn)
             {
                 case turn.whitesTurn:
                     color = "white";
@@ -656,7 +656,7 @@ namespace ChessGame
             {
                 for (int j = 0; j < 8; j++)
                 {
-                    if (((TextBlock)_main.chessboard.FindName(_main.board[i, j].Name)).Text == "♔" && isAChessPieceBlackOrWhite(i, j) == color)
+                    if (((TextBlock)_multiplayer.chessboard.FindName(_multiplayer.board[i, j].Name)).Text == "♔" && isAChessPieceBlackOrWhite(i, j) == color)
                     {
                         return (i, j);
                     }
@@ -668,10 +668,10 @@ namespace ChessGame
         {
             findAllDangerousTiles();
 
-            foreach (var danger in _main.listOfDangerousMoves)
+            foreach (var danger in _multiplayer.listOfDangerousMoves)
             {
                 isKingInCheck = false;
-                if (_main.board[danger.Item1, danger.Item2].Name == findKing())
+                if (_multiplayer.board[danger.Item1, danger.Item2].Name == findKing())
                 {
                     isKingInCheck = true;
                     return isKingInCheck;
@@ -684,7 +684,7 @@ namespace ChessGame
         public bool doesKingHaveMoves(int xcords, int ycords)
         {
             string color = null;
-            switch (_main.playerTurn)
+            switch (_multiplayer.playerTurn)
             {
                 case turn.whitesTurn:
                     color = "black";
@@ -693,16 +693,16 @@ namespace ChessGame
                     color = "white";
                     break;
             }
-            _main.listOfPlayableMoves.Clear();
-            if (isInBoundsX(xcords) && isInBoundsY(ycords + 1) && (!doesTileHaveAChessPiece(xcords, ycords + 1) && isTileSafe(_main.board[xcords, ycords + 1].Name))) { _main.listOfPlayableMoves.Add((xcords, ycords + 1)); }
-            if (isInBoundsX(xcords + 1) && isInBoundsY(ycords + 1) && (!doesTileHaveAChessPiece(xcords + 1, ycords + 1) || isAChessPieceBlackOrWhite(xcords + 1, ycords + 1) == color) && isTileSafe(_main.board[xcords + 1, ycords + 1].Name)) { _main.listOfPlayableMoves.Add((xcords + 1, ycords + 1)); }
-            if (isInBoundsX(xcords + 1) && isInBoundsY(ycords) && (!doesTileHaveAChessPiece(xcords + 1, ycords) || isAChessPieceBlackOrWhite(xcords + 1, ycords) == color) && isTileSafe(_main.board[xcords + 1, ycords].Name)) { _main.listOfPlayableMoves.Add((xcords + 1, ycords)); }
-            if (isInBoundsX(xcords + 1) && isInBoundsY(ycords - 1) && (!doesTileHaveAChessPiece(xcords + 1, ycords - 1) || isAChessPieceBlackOrWhite(xcords + 1, ycords - 1) == color) && isTileSafe(_main.board[xcords + 1, ycords - 1].Name)) { _main.listOfPlayableMoves.Add((xcords + 1, ycords - 1)); }
-            if (isInBoundsX(xcords) && isInBoundsY(ycords - 1) && (!doesTileHaveAChessPiece(xcords, ycords - 1) || isAChessPieceBlackOrWhite(xcords, ycords - 1) == color) && isTileSafe(_main.board[xcords, ycords - 1].Name)) { _main.listOfPlayableMoves.Add((xcords, ycords - 1)); }
-            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords - 1) && (!doesTileHaveAChessPiece(xcords - 1, ycords - 1) || isAChessPieceBlackOrWhite(xcords - 1, ycords - 1) == color) && isTileSafe(_main.board[xcords - 1, ycords - 1].Name)) { _main.listOfPlayableMoves.Add((xcords - 1, ycords - 1)); }
-            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords) && (!doesTileHaveAChessPiece(xcords - 1, ycords) || isAChessPieceBlackOrWhite(xcords - 1, ycords) == color) && isTileSafe(_main.board[xcords - 1, ycords].Name)) { _main.listOfPlayableMoves.Add((xcords - 1, ycords)); }
-            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords + 1) && (!doesTileHaveAChessPiece(xcords - 1, ycords + 1) || isAChessPieceBlackOrWhite(xcords - 1, ycords + 1) == color) && isTileSafe(_main.board[xcords - 1, ycords + 1].Name)) { _main.listOfPlayableMoves.Add((xcords - 1, ycords + 1)); }
-            if (!_main.listOfPlayableMoves.Any()) { return false; }
+            _multiplayer.listOfPlayableMoves.Clear();
+            if (isInBoundsX(xcords) && isInBoundsY(ycords + 1) && (!doesTileHaveAChessPiece(xcords, ycords + 1) && isTileSafe(_multiplayer.board[xcords, ycords + 1].Name))) { _multiplayer.listOfPlayableMoves.Add((xcords, ycords + 1)); }
+            if (isInBoundsX(xcords + 1) && isInBoundsY(ycords + 1) && (!doesTileHaveAChessPiece(xcords + 1, ycords + 1) || isAChessPieceBlackOrWhite(xcords + 1, ycords + 1) == color) && isTileSafe(_multiplayer.board[xcords + 1, ycords + 1].Name)) { _multiplayer.listOfPlayableMoves.Add((xcords + 1, ycords + 1)); }
+            if (isInBoundsX(xcords + 1) && isInBoundsY(ycords) && (!doesTileHaveAChessPiece(xcords + 1, ycords) || isAChessPieceBlackOrWhite(xcords + 1, ycords) == color) && isTileSafe(_multiplayer.board[xcords + 1, ycords].Name)) { _multiplayer.listOfPlayableMoves.Add((xcords + 1, ycords)); }
+            if (isInBoundsX(xcords + 1) && isInBoundsY(ycords - 1) && (!doesTileHaveAChessPiece(xcords + 1, ycords - 1) || isAChessPieceBlackOrWhite(xcords + 1, ycords - 1) == color) && isTileSafe(_multiplayer.board[xcords + 1, ycords - 1].Name)) { _multiplayer.listOfPlayableMoves.Add((xcords + 1, ycords - 1)); }
+            if (isInBoundsX(xcords) && isInBoundsY(ycords - 1) && (!doesTileHaveAChessPiece(xcords, ycords - 1) || isAChessPieceBlackOrWhite(xcords, ycords - 1) == color) && isTileSafe(_multiplayer.board[xcords, ycords - 1].Name)) { _multiplayer.listOfPlayableMoves.Add((xcords, ycords - 1)); }
+            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords - 1) && (!doesTileHaveAChessPiece(xcords - 1, ycords - 1) || isAChessPieceBlackOrWhite(xcords - 1, ycords - 1) == color) && isTileSafe(_multiplayer.board[xcords - 1, ycords - 1].Name)) { _multiplayer.listOfPlayableMoves.Add((xcords - 1, ycords - 1)); }
+            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords) && (!doesTileHaveAChessPiece(xcords - 1, ycords) || isAChessPieceBlackOrWhite(xcords - 1, ycords) == color) && isTileSafe(_multiplayer.board[xcords - 1, ycords].Name)) { _multiplayer.listOfPlayableMoves.Add((xcords - 1, ycords)); }
+            if (isInBoundsX(xcords - 1) && isInBoundsY(ycords + 1) && (!doesTileHaveAChessPiece(xcords - 1, ycords + 1) || isAChessPieceBlackOrWhite(xcords - 1, ycords + 1) == color) && isTileSafe(_multiplayer.board[xcords - 1, ycords + 1].Name)) { _multiplayer.listOfPlayableMoves.Add((xcords - 1, ycords + 1)); }
+            if (!_multiplayer.listOfPlayableMoves.Any()) { return false; }
             return true;
         }
 
