@@ -10,6 +10,7 @@ namespace ChessGame
 {
     internal class TCPServer
     {
+        private string response;
         private Socket? listener;
         private Socket? clientSocket;
         public TCPServer()
@@ -43,12 +44,27 @@ namespace ChessGame
                 var eom = "<EOM>";
                 var buffer = new byte[1024];
                 var recieved = await clientSocket.ReceiveAsync(buffer, SocketFlags.None);
-                var response = Encoding.UTF8.GetString(buffer, 0, recieved);
+                response = Encoding.UTF8.GetString(buffer, 0, recieved);
                 if (response.IndexOf(eom) > -1)
                 {
                     response = response.Replace(eom, "");
                     System.Diagnostics.Debug.WriteLine("CLIENT -> SERVER:" + response);
                     response = null;
+                }
+            }
+        }
+
+        public async Task<String> RecieveMessage()
+        {
+            var recievedMessage = "";
+            while (true)
+            {
+                await Task.Delay(100);
+                if (response != null)
+                {
+                    recievedMessage = response;
+                    response = null;
+                    return recievedMessage;
                 }
             }
         }

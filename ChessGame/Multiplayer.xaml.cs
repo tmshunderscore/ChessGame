@@ -151,19 +151,15 @@ namespace ChessGame
         }
 
 
-        private async Task WaitForOtherPlayersResponse()
+        private async void ProcessOpponentsMove(string move)
         {
-            // simulating oponents respond time, also debug purposes
 
-            System.Diagnostics.Debug.WriteLine("Waiting for other player's response...");
+            // TODO: Process Opponent's Move (Use Algebraic Chess Notation => need to change SendMessage() function)
 
-            await Task.Delay(5000); //instead of this will be a network call to get the other player's 
 
-            System.Diagnostics.Debug.WriteLine("Player has played their move...");
-
+            // Change turns
             playerTurn = myTurn;
 
-            //return Task.CompletedTask;
         }
 
         private void SendMoveDataToOpponent(String message)
@@ -276,7 +272,8 @@ namespace ChessGame
                         if (((TextBlock)currentSender).Name != ((TextBlock)sender).Name)
                         {
                             SendMoveDataToOpponent(((TextBlock)currentSender).Name + ((TextBlock)sender).Name);
-                            await WaitForOtherPlayersResponse();
+                            string opponentsMove = await tcpClient.RecieveMessage();
+                            ProcessOpponentsMove(opponentsMove);
                         }
                         break;
                 }

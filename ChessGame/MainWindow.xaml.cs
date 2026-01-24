@@ -18,10 +18,6 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace ChessGame
 {
-    //---------------TODOS---------------//
-    // TODO: Implement en passant (later)
-    //-----------------------------------//
-
     public partial class MainWindow : Window
     {
         

@@ -11,6 +11,7 @@ namespace ChessGame
 {
     internal class TCPClient
     {
+        private string response;
         private Socket? client;
         public TCPClient() {
             System.Diagnostics.Debug.WriteLine("TCPClient initialized");
@@ -29,6 +30,21 @@ namespace ChessGame
                 if(message.StartsWith("CLIENTFOUND"))
                 {
                     return result.Result.RemoteEndPoint.Address;
+                }
+            }
+        }
+
+        public async Task<String> RecieveMessage()
+        {
+            var recievedMessage = "";
+            while (true)
+            {
+                await Task.Delay(100);
+                if (response != null)
+                {
+                    recievedMessage = response;
+                    response = null;
+                    return recievedMessage;
                 }
             }
         }
@@ -63,12 +79,11 @@ namespace ChessGame
                 var eom = "<EOM>";
                 var buffer = new byte[1024];
                 var recieved = await client.ReceiveAsync(buffer, SocketFlags.None);
-                var response = Encoding.UTF8.GetString(buffer, 0, recieved);
+                response = Encoding.UTF8.GetString(buffer, 0, recieved);
                 if (response.IndexOf(eom) > -1)
                 {
                     response = response.Replace(eom, "");
                     System.Diagnostics.Debug.WriteLine("SERVER -> CLIENT:" + response);
-                    response = null;
                 }
             }
         }
